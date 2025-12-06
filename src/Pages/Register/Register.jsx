@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { AuthContext } from "../../Context/AuthContext/AuthContext";
 import useAuth from "../../Hooks/useAuth";
 import { useForm } from "react-hook-form";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 
 const Register = () => {
   const { createUser } = useAuth();
@@ -63,7 +64,7 @@ const Register = () => {
                   <div className="relative">
                     <label className="label">Password</label>
                     <input
-                      type="password"
+                      type={show ? "text" : "password"}
                       {...register("password", {
                         required: true,
                         pattern: /^(?=.*[A-Z])(?=.*[a-z]).{6,}$/,
@@ -73,7 +74,7 @@ const Register = () => {
                     />
                     <span
                       onClick={() => setShow(!show)}
-                      className="absolute top-7 right-3 cursor-pointer text-gray-600 dark:text-gray-300"
+                      className="absolute top-7 right-3 cursor-pointer text-gray-600  dark:text-gray-300"
                     >
                       {show ? (
                         <FaRegEye size={22} />
