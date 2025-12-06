@@ -1,16 +1,20 @@
 import React from "react";
 import useAuth from "../../../Hooks/useAuth";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const SocialLogin = () => {
   const { signInWithGoogle } = useAuth();
   // const axiosSequre = useAxiosSequre();
   // const location = useLocation();
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     signInWithGoogle()
       .then((result) => {
         console.log(result.user);
+        toast.success("User login Successfully");
+        navigate("/");
 
         // create user in the database
         // const userInfo = {

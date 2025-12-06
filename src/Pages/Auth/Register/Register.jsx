@@ -4,11 +4,14 @@ import useAuth from "../../../Hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import SocialLogin from "../SocialLogin/SocialLogin";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Register = () => {
-  const { createUser } = useAuth();
+  const { createUser, updateUserProfile } = useAuth();
   const [show, setShow] = useState(false);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -16,9 +19,32 @@ const Register = () => {
     formState: { errors },
   } = useForm();
   const handleRegister = (data) => {
+    const profileImage = data.photo[0];
     createUser(data.email, data.password)
       .then((result) => {
         console.log(result.user);
+        const formData = new FormData();
+        formData.append("image", profileImage);
+        const image_Api_URL = `https://api.imgbb.com/1/upload?key=${
+          import.meta.env.VITE_image_host_key
+        }`;
+        axios.post(image_Api_URL, formData).then((res) => {
+          console.log("after image url", res.data.data.url);
+          // update user profile
+          const userProfile = {
+            displayName: data.name,
+            photoURL: res.data.data.url,
+          };
+          updateUserProfile(userProfile)
+            .then(() => {
+              console.log("update profile done");
+              toast.success("User login Successfully");
+              navigate("/");
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
       })
       .catch((error) => {
         console.log(error);
