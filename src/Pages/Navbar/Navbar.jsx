@@ -89,10 +89,11 @@ const Navbar = () => {
   const links = (
     <div className="flex items-center gap-3 text-lg">
       <NavLink to="/">Home</NavLink>
-      <NavLink to="/add-lesson">Add Lesson</NavLink>
-      <NavLink to="/my-lessons">My Lessons</NavLink>
+      <NavLink to="/dashboard/add-lesson">Add Lesson</NavLink>
+      <NavLink to="/dashboard/my-lessons">My Lessons</NavLink>
       <NavLink to="/public-lessons">Public Lessons</NavLink>
-      <NavLink to="/pricing/upgrade">Pricing</NavLink>
+      <NavLink to="/lesson-details"> Lessons details</NavLink>
+      {user && <NavLink to="/pricing">Pricing</NavLink>}
     </div>
   );
 
