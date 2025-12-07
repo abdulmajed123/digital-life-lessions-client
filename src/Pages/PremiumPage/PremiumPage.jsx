@@ -1,8 +1,10 @@
 import { Check, X } from "lucide-react";
 import React from "react";
+import useAuth from "../../Hooks/useAuth";
 // import { Check, X } from "lucide-react";
 
-const PremiumPage = ({ user }) => {
+const PremiumPage = () => {
+  const { user } = useAuth();
   const isPremium = user?.isPremium;
 
   return (

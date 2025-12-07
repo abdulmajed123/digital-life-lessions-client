@@ -9,7 +9,8 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import AddLesson from "../Pages/Dashboard/AddLesson/AddLesson";
 import MyLessons from "../Pages/Dashboard/MyLessons/MyLessons";
 import PremiumPage from "../Pages/PremiumPage/PremiumPage";
-import LessonDetails from "../Component/LessonDetails/LessonDetails";
+import Profile from "../Pages/Dashboard/Profile/Profile";
+import MyFavorite from "../Pages/Dashboard/MyFavorite/MyFavorite";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
         element: <Home></Home>,
       },
       {
-        path: "/pricing",
+        path: "/premium",
         element: <PremiumPage></PremiumPage>,
       },
       {
@@ -32,10 +33,10 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register></Register>,
       },
-      {
-        path: "/lesson-details",
-        element: <LessonDetails></LessonDetails>,
-      },
+      // {
+      //   path: "/lesson-details",
+      //   element: <LessonDetails></LessonDetails>,
+      // },
     ],
   },
   {
@@ -53,6 +54,14 @@ const router = createBrowserRouter([
       {
         path: "my-lessons",
         element: <MyLessons></MyLessons>,
+      },
+      {
+        path: "my-favorite",
+        element: <MyFavorite></MyFavorite>,
+      },
+      {
+        path: "profile",
+        element: <Profile></Profile>,
       },
     ],
   },

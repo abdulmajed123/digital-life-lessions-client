@@ -166,7 +166,7 @@ const AddLessonForm = ({ currentUser }) => {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    console.log(data); // শুধু ডাটা দেখানোর জন্য
+    console.log(data);
   };
 
   const isPremiumUser = currentUser?.isPremium;

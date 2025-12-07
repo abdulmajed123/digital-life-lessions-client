@@ -93,7 +93,17 @@ const Navbar = () => {
       <NavLink to="/dashboard/my-lessons">My Lessons</NavLink>
       <NavLink to="/public-lessons">Public Lessons</NavLink>
       <NavLink to="/lesson-details"> Lessons details</NavLink>
-      {user && <NavLink to="/pricing">Pricing</NavLink>}
+      {user && (
+        <>
+          {user.isPremium === true ? (
+            <span className="text-yellow-600 font-semibold">Premium ⭐</span>
+          ) : (
+            <Link to="/premium" className="text-blue-600">
+              Upgrade
+            </Link>
+          )}
+        </>
+      )}
     </div>
   );
 
