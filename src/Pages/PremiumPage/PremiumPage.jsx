@@ -1,10 +1,26 @@
 import { Check, X } from "lucide-react";
 import React from "react";
 import useAuth from "../../Hooks/useAuth";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 // import { Check, X } from "lucide-react";
 
 const PremiumPage = () => {
   const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
+  const handleUpgrade = async () => {
+    try {
+      const res = await axiosSecure.post(`/create-checkout-session`, {
+        email: user.email,
+      });
+
+      window.location.href = res.data.url; // Stripe Checkout page
+    } catch (error) {
+      console.log(error);
+      alert("Failed to start payment.");
+    }
+  };
+
   const isPremium = user?.isPremium;
 
   return (
@@ -59,7 +75,10 @@ const PremiumPage = () => {
           </h3>
           <p className="text-gray-700 mb-4">Lifetime Access – ৳1500 Only</p>
 
-          <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg text-lg font-semibold transition">
+          <button
+            onClick={handleUpgrade}
+            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-3 rounded-lg text-lg font-semibold transition"
+          >
             Upgrade to Premium
           </button>
 

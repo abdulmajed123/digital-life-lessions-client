@@ -8,6 +8,7 @@ import { Link, useNavigate } from "react-router";
 import axios from "axios";
 import { toast } from "react-toastify";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { imageUpload } from "../../../Utils";
 
 const Register = () => {
   const { createUser, updateUserProfile } = useAuth();
@@ -20,46 +21,38 @@ const Register = () => {
     // watch,
     formState: { errors },
   } = useForm();
-  const handleRegister = (data) => {
-    const profileImage = data.photo[0];
-    createUser(data.email, data.password)
+  const handleRegister = async (data) => {
+    const { name, email, photo, password } = data;
+    const profileImage = photo[0];
+    const photoURL = await imageUpload(profileImage);
+    createUser(email, password)
       .then((result) => {
         console.log(result.user);
-        const formData = new FormData();
-        formData.append("image", profileImage);
-        const image_Api_URL = `https://api.imgbb.com/1/upload?key=${
-          import.meta.env.VITE_image_host_key
-        }`;
-        axios.post(image_Api_URL, formData).then((res) => {
-          console.log("after image url", res.data.data.url);
-          const photoURL = res.data.data.url;
-
-          const userInfo = {
-            email: data.email,
-            displayName: data.name,
-            photoURL: photoURL,
-          };
-          axiosSecure.post("/users", userInfo).then((res) => {
-            if (res.data.insertedId) {
-              console.log("user creatad in the database");
-            }
-          });
-
-          // update user profile
-          const userProfile = {
-            displayName: data.name,
-            photoURL: photoURL,
-          };
-          updateUserProfile(userProfile)
-            .then(() => {
-              console.log("update profile done");
-              toast.success("User login Successfully");
-              navigate("/");
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+        const userInfo = {
+          email: email,
+          displayName: name,
+          photoURL: photoURL,
+        };
+        axiosSecure.post("/users", userInfo).then((res) => {
+          if (res.data.insertedId) {
+            console.log("user creatad in the database");
+          }
         });
+
+        // update user profile
+        const userProfile = {
+          displayName: name,
+          photoURL: photoURL,
+        };
+        updateUserProfile(userProfile, photoURL)
+          .then(() => {
+            console.log("update profile done");
+            toast.success("User login Successfully");
+            navigate("/");
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       })
       .catch((error) => {
         console.log(error);

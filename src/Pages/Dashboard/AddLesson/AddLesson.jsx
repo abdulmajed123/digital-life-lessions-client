@@ -161,12 +161,55 @@
 
 import React from "react";
 import { useForm } from "react-hook-form";
+import { imageUpload } from "../../../Utils";
+import useAuth from "../../../Hooks/useAuth";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { toast } from "react-toastify";
 
-const AddLessonForm = ({ currentUser }) => {
-  const { register, handleSubmit } = useForm();
+const AddLesson = ({ currentUser }) => {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+  const { register, handleSubmit, reset } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    const {
+      title,
+      description,
+      category,
+      emotionalTone,
+      image,
+      privacy,
+      accessLevel,
+    } = data;
+
+    const imageFile = image[0];
+
+    try {
+      const imageURL = await imageUpload(imageFile);
+      const lessonData = {
+        title,
+        description,
+        category,
+        emotionalTone,
+        image: imageURL,
+        privacy,
+        accessLevel,
+        name: user?.displayName,
+        email: user?.email,
+        creatorPhoto: user?.photoURL,
+        createdAt: new Date(),
+      };
+
+      const response = await axiosSecure.post("/lessons", lessonData);
+      if (response.data.insertedId) {
+        toast.success("Lesson created successfully!");
+        reset(); // Clear form
+      } else {
+        toast.error("Failed to create lesson. Try again!");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const isPremiumUser = currentUser?.isPremium;
@@ -280,4 +323,4 @@ const AddLessonForm = ({ currentUser }) => {
   );
 };
 
-export default AddLessonForm;
+export default AddLesson;

@@ -11,6 +11,7 @@ import MyLessons from "../Pages/Dashboard/MyLessons/MyLessons";
 import PremiumPage from "../Pages/PremiumPage/PremiumPage";
 import Profile from "../Pages/Dashboard/Profile/Profile";
 import MyFavorite from "../Pages/Dashboard/MyFavorite/MyFavorite";
+import PaymentSuccess from "../Pages/Dashboard/Profile/PaymentSuccess/PaymentSuccess";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       </PrivateRoutes>
     ),
     children: [
+      {
+        path: "payment-success",
+        element: <PaymentSuccess></PaymentSuccess>,
+      },
       {
         path: "add-lesson",
         element: <AddLesson></AddLesson>,
