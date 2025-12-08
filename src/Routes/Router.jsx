@@ -13,8 +13,9 @@ import Profile from "../Pages/Dashboard/Profile/Profile";
 import MyFavorite from "../Pages/Dashboard/MyFavorite/MyFavorite";
 import PaymentSuccess from "../Pages/Dashboard/Profile/PaymentSuccess/PaymentSuccess";
 import PublicLessons from "../Pages/PuplicLessons/PublicLessons";
-import LessonDetailsFullUI from "../Component/LessonDetails/LessonDetails";
 import LessonDetails from "../Component/LessonDetails/LessonDetails";
+import LessonUpdate from "../Component/LessonUpdate/LessonUpdate";
+import ManageUsers from "../Pages/Dashboard/ManageUsers/ManageUsers";
 
 const router = createBrowserRouter([
   {
@@ -43,7 +44,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/lesson/:id",
-        element: <LessonDetails></LessonDetails>,
+        element: (
+          <PrivateRoutes>
+            <LessonDetails></LessonDetails>
+          </PrivateRoutes>
+        ),
       },
     ],
   },
@@ -64,12 +69,20 @@ const router = createBrowserRouter([
         element: <AddLesson></AddLesson>,
       },
       {
+        path: "lesson-update/:id",
+        element: <LessonUpdate></LessonUpdate>,
+      },
+      {
         path: "my-lessons",
         element: <MyLessons></MyLessons>,
       },
       {
         path: "my-favorite",
         element: <MyFavorite></MyFavorite>,
+      },
+      {
+        path: "manage-user",
+        element: <ManageUsers></ManageUsers>,
       },
       {
         path: "profile",
