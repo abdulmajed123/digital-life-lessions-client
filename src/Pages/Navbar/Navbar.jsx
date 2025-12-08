@@ -18,7 +18,6 @@ const Navbar = () => {
       <NavLink to="/dashboard/add-lesson">Add Lesson</NavLink>
       <NavLink to="/dashboard/my-lessons">My Lessons</NavLink>
       <NavLink to="/public-lessons">Public Lessons</NavLink>
-      <NavLink to="/lesson-details"> Lessons details</NavLink>
       {user && (
         <>
           {user?.isPremium ? (

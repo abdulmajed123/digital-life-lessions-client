@@ -12,6 +12,7 @@ import PremiumPage from "../Pages/PremiumPage/PremiumPage";
 import Profile from "../Pages/Dashboard/Profile/Profile";
 import MyFavorite from "../Pages/Dashboard/MyFavorite/MyFavorite";
 import PaymentSuccess from "../Pages/Dashboard/Profile/PaymentSuccess/PaymentSuccess";
+import PublicLessons from "../Pages/PuplicLessons/PublicLessons";
 
 const router = createBrowserRouter([
   {
@@ -34,10 +35,10 @@ const router = createBrowserRouter([
         path: "/register",
         element: <Register></Register>,
       },
-      // {
-      //   path: "/lesson-details",
-      //   element: <LessonDetails></LessonDetails>,
-      // },
+      {
+        path: "/public-lessons",
+        element: <PublicLessons></PublicLessons>,
+      },
     ],
   },
   {
