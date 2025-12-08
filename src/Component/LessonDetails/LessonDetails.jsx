@@ -28,7 +28,7 @@
 //   );
 // };
 
-// const LessonDetailsFullUI = ({ lesson = {}, user = {}, allLessons = [] }) => {
+// const LessonDetails = ({ lesson = {}, user = {}, allLessons = [] }) => {
 //   const isPremiumUser = user?.isPremium || false;
 //   const showUpgradeBanner = lesson?.access === "premium" && !isPremiumUser;
 
@@ -230,4 +230,41 @@
 //   );
 // };
 
-// export default LessonDetailsFullUI;
+// export default LessonDetails;
+import React from "react";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "react-router";
+import LoadingSpinner from "../LoadingSpenner/LoadingSpenner";
+
+const LessonDetails = () => {
+  const { id } = useParams();
+  const axiosSecure = useAxiosSecure();
+
+  const { data: lesson, isPending } = useQuery({
+    queryKey: ["lesson", id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/lessons/${id}`);
+      return res.data;
+    },
+  });
+  if (isPending) return <LoadingSpinner></LoadingSpinner>;
+  return (
+    <div className="max-w-4xl mx-auto my-10 p-5 shadow-lg rounded-lg bg-white">
+      <img src={lesson.image} alt="" className="rounded-md mb-4" />
+
+      <h1 className="text-3xl font-bold mb-3">{lesson.title}</h1>
+      <p className="text-gray-600 mb-2">{lesson.description}</p>
+
+      <p className="font-semibold">Category: {lesson.category}</p>
+      <p className="font-semibold">Emotional Tone: {lesson.emotionalTone}</p>
+
+      <div className="mt-4 p-3 bg-gray-100 rounded-md">
+        <h3 className="font-bold mb-2">Creator</h3>
+        <p>Name: {lesson.creatorName}</p>
+      </div>
+    </div>
+  );
+};
+
+export default LessonDetails;

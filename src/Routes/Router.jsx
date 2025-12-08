@@ -13,6 +13,8 @@ import Profile from "../Pages/Dashboard/Profile/Profile";
 import MyFavorite from "../Pages/Dashboard/MyFavorite/MyFavorite";
 import PaymentSuccess from "../Pages/Dashboard/Profile/PaymentSuccess/PaymentSuccess";
 import PublicLessons from "../Pages/PuplicLessons/PublicLessons";
+import LessonDetailsFullUI from "../Component/LessonDetails/LessonDetails";
+import LessonDetails from "../Component/LessonDetails/LessonDetails";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/public-lessons",
         element: <PublicLessons></PublicLessons>,
+      },
+      {
+        path: "/lesson/:id",
+        element: <LessonDetails></LessonDetails>,
       },
     ],
   },
