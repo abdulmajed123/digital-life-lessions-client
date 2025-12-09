@@ -1,23 +1,75 @@
 import React from "react";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "../../../Component/LoadingSpenner/LoadingSpenner";
+import useAuth from "../../../Hooks/useAuth";
+import Swal from "sweetalert2";
 
 export default function ManageUsers() {
-  const users = [
-    {
-      _id: 1,
-      name: "John Doe",
-      email: "john@example.com",
-      role: "user",
-      lessons: 5,
-    },
-    {
-      _id: 2,
-      name: "Sarah Khan",
-      email: "sarah@example.com",
-      role: "admin",
-      lessons: 12,
-    },
-  ];
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
+  const {
+    data: users = [],
+    isPending,
+    refetch,
+  } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/users");
+      return res.data;
+    },
+  });
+
+  const { data: userLessons = [] } = useQuery({
+    queryKey: ["my-lessons", user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/users/create-lessons?email=${user?.email}`
+      );
+      return res.data;
+    },
+  });
+
+  const handleMakeAdmin = (user) => {
+    const roleInfo = {
+      role: "Admin",
+    };
+    axiosSecure.patch(`/users/${user._id}`, roleInfo).then((res) => {
+      if (res.data.modifiedCount) {
+        console.log(res.data);
+        refetch();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: `${user.displayName} marekd as an Admin`,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    });
+  };
+
+  const handleRemoveAdmin = (user) => {
+    const roleInfo = {
+      role: "user",
+    };
+    axiosSecure.patch(`/users/${user._id}`, roleInfo).then((res) => {
+      if (res.data.modifiedCount) {
+        console.log(res.data);
+        refetch();
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: `${user.displayName} removed from Admin`,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    });
+  };
+
+  if (isPending) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">👥 Manage Users</h2>
@@ -36,13 +88,23 @@ export default function ManageUsers() {
           <tbody>
             {users.map((user) => (
               <tr key={user._id} className="border-b hover:bg-gray-50">
-                <td className="p-3 font-medium">{user.name}</td>
+                <td className="p-3 font-medium">{user.displayName}</td>
                 <td className="p-3">{user.email}</td>
                 <td className="p-3">{user.role}</td>
-                <td className="p-3">{user.lessons}</td>
+                <td className="p-3">{userLessons.length}</td>
                 <td className="p-3 flex gap-2 justify-end">
-                  {user.role !== "admin" && (
-                    <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  {user.role === "admin" ? (
+                    <button
+                      onClick={() => handleMakeAdmin(user)}
+                      className="px-3 py-1 bg-red-500 text-white rounded "
+                    >
+                      Removed
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleRemoveAdmin(user)}
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
                       Promote
                     </button>
                   )}

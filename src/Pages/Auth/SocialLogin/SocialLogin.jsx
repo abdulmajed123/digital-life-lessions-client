@@ -1,12 +1,13 @@
 import React from "react";
 import useAuth from "../../../Hooks/useAuth";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 
 const SocialLogin = () => {
   const { signInWithGoogle } = useAuth();
-  // const axiosSequre = useAxiosSequre();
-  // const location = useLocation();
+  const axiosSequre = useAxiosSecure();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogin = () => {
@@ -17,16 +18,16 @@ const SocialLogin = () => {
         navigate("/");
 
         // create user in the database
-        // const userInfo = {
-        //   email: result.user.email,
-        //   displayName: result.user.displayName,
-        //   photoURL: result.user.photoURL,
-        // };
+        const userInfo = {
+          email: result.user.email,
+          displayName: result.user.displayName,
+          photoURL: result.user.photoURL,
+        };
 
-        // axiosSequre.post("/users", userInfo).then((res) => {
-        //   console.log("user data has been store", res.data);
-        //   navigate(location?.state || "/");
-        // });
+        axiosSequre.post("/users", userInfo).then((res) => {
+          console.log("user data has been store", res.data);
+          navigate(location?.state || "/");
+        });
       })
       .catch((error) => {
         console.log(error);

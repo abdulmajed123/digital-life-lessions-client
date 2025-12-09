@@ -1,5 +1,10 @@
 import React from "react";
-import { FaUserCircle } from "react-icons/fa";
+import {
+  FaBook,
+  FaExclamationTriangle,
+  FaUserCircle,
+  FaUsers,
+} from "react-icons/fa";
 import {
   MdAddCircleOutline,
   MdFavoriteBorder,
@@ -117,11 +122,33 @@ const DashboardLayout = () => {
                 data-tip="Manage User"
               >
                 {/* Home icon */}
-                <FaUserCircle size={22} />
+                <FaUsers size={22} />
                 <span className="is-drawer-close:hidden">Manage User</span>
               </Link>
             </li>
+            <li>
+              <Link
+                to="/dashboard/manage-lesson"
+                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                data-tip="Manage Lessons"
+              >
+                {/* Home icon */}
+                <FaBook size={22} />
+                <span className="is-drawer-close:hidden">Manage Lessons</span>
+              </Link>
+            </li>
 
+            <li>
+              <Link
+                to="/dashboard/reported-lessons"
+                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                data-tip="Reported Lessons"
+              >
+                {/* Home icon */}
+                <FaExclamationTriangle size={22} />
+                <span className="is-drawer-close:hidden">Reported Lessons</span>
+              </Link>
+            </li>
             <li>
               <Link
                 to="/dashboard/profile"

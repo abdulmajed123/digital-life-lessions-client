@@ -42,7 +42,7 @@ export default function UpdateLesson({ isPremiumUser }) {
       accessLevel,
     } = data;
 
-    let imageURL = lesson.image; // যদি user নতুন image না দেয়, তাহলে old image রাখবে
+    let imageURL = lesson.image;
     if (image && image[0]) {
       imageURL = await imageUpload(image[0]); // নতুন image আপলোড
     }

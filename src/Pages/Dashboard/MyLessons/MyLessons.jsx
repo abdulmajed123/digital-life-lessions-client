@@ -3,13 +3,12 @@ import useAuth from "../../../Hooks/useAuth";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import LoadingSpinner from "../../../Component/LoadingSpenner/LoadingSpenner";
-import { Link, useParams } from "react-router";
+import { Link } from "react-router";
 import Swal from "sweetalert2";
 
 const MyLessons = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { id } = useParams();
 
   const { data: lessons = [], isPending } = useQuery({
     queryKey: ["my-lessons", user?.email],

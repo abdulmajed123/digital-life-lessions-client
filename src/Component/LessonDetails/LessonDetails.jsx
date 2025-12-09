@@ -1,270 +1,287 @@
-// import React, { useState } from "react";
-// import { Heart, Bookmark, Share2, Flag, User2 } from "lucide-react";
+// import React from "react";
+// import {
+//   FaHeart,
+//   FaRegHeart,
+//   FaBookmark,
+//   FaRegBookmark,
+//   FaFlag,
+//   FaShareAlt,
+// } from "react-icons/fa";
 
-// // ===== Custom Button & Badge Components =====
-// const Button = ({ children, onClick, className }) => (
-//   <button
-//     onClick={onClick}
-//     className={`bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-white font-semibold py-2 px-4 rounded-lg shadow-lg transition ${className}`}
-//   >
-//     {children}
-//   </button>
-// );
-
-// const Badge = ({ children, color = "blue", className }) => {
-//   const colors = {
-//     blue: "bg-blue-500 text-white",
-//     green: "bg-green-500 text-white",
-//     red: "bg-red-500 text-white",
-//     yellow: "bg-yellow-500 text-black",
-//     gray: "bg-gray-200 text-gray-800",
+// export default function LessonDetails() {
+//   const lesson = {
+//     title: "The Art of Staying Consistent",
+//     description:
+//       "Consistency is the key to success. In this lesson, I share my personal journey of building habits that stick...",
+//     category: "Personal Growth",
+//     tone: "Motivational",
+//     image: "https://i.ibb.co/4pDNDk1/avatar.png",
+//     author: "Abdul Majid",
+//     authorImage: "https://i.ibb.co/4pDNDk1/avatar.png",
+//     createdAt: "2025-12-09",
+//     updatedAt: "2025-12-10",
+//     likes: 1200,
+//     favorites: 342,
 //   };
-//   return (
-//     <span
-//       className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${colors[color]} ${className}`}
-//     >
-//       {children}
-//     </span>
-//   );
-// };
-
-// const LessonDetails = ({ lesson = {}, user = {}, allLessons = [] }) => {
-//   const isPremiumUser = user?.isPremium || false;
-//   const showUpgradeBanner = lesson?.access === "premium" && !isPremiumUser;
-
-//   const [liked, setLiked] = useState(false);
-//   const [favorited, setFavorited] = useState(false);
-//   const [commentInput, setCommentInput] = useState("");
-//   const [comments, setComments] = useState([
-//     { user: "John", text: "Amazing lesson!" },
-//     { user: "Sara", text: "Very inspiring ❤️" },
-//   ]);
-
-//   const viewsCount = Math.floor(Math.random() * 10000);
-
-//   const similarLessons = allLessons
-//     .filter(
-//       (l) =>
-//         l.id !== lesson.id &&
-//         (l.category === lesson.category || l.tone === lesson.tone)
-//     )
-//     .slice(0, 6);
 
 //   return (
-//     <div className="max-w-6xl mx-auto py-12 px-4 relative">
-//       {/* ===== Premium Banner ===== */}
-//       {showUpgradeBanner && (
-//         <div className="absolute inset-0 bg-white/80 backdrop-blur-md z-20 flex flex-col items-center justify-center text-center p-10 rounded-lg border border-yellow-300 shadow-lg">
-//           <p className="text-2xl font-bold mb-3">Premium Lesson 🔒</p>
-//           <p className="text-gray-700 mb-5">
-//             Upgrade to Premium to view full content
-//           </p>
-//           <Button onClick={() => (window.location.href = "/pricing")}>
-//             Upgrade Now
-//           </Button>
-//         </div>
-//       )}
+//     <section className="container mx-auto px-5 py-10">
+//       {/* Lesson Card */}
+//       <div className="rounded-xl overflow-hidden shadow-lg bg-white">
+//         <img
+//           src={lesson.image}
+//           alt="lesson"
+//           className="w-full h-64 object-cover"
+//         />
+//         <div className="p-6">
+//           {/* Lesson Title */}
+//           <h1 className="text-3xl font-bold mb-4 text-gray-800">
+//             {lesson.title}
+//           </h1>
 
-//       {/* ===== Main Content ===== */}
-//       <div className={showUpgradeBanner ? "filter blur-sm" : ""}>
-//         {/* Featured Image */}
-//         {lesson.image && (
-//           <img
-//             src={lesson.image}
-//             alt="Lesson Cover"
-//             className="w-full h-64 object-cover rounded-2xl shadow-lg mb-6"
-//           />
-//         )}
+//           {/* Lesson Description */}
+//           <p className="text-gray-700 mb-4">{lesson.description}</p>
 
-//         {/* Title */}
-//         <h1 className="text-4xl font-extrabold mb-4 text-gray-900">
-//           {lesson.title}
-//         </h1>
-
-//         {/* Badges */}
-//         <div className="flex flex-wrap gap-2 mb-6">
-//           <Badge color="blue">{lesson.category}</Badge>
-//           <Badge color="gray">{lesson.tone}</Badge>
-//           <Badge color="green">Public</Badge>
-//           {lesson.access === "premium" && <Badge color="yellow">Premium</Badge>}
-//         </div>
-
-//         {/* Full Description */}
-//         <p className="text-gray-800 leading-relaxed mb-8 whitespace-pre-line text-lg">
-//           {lesson.description}
-//         </p>
-
-//         {/* Metadata */}
-//         <div className="flex flex-wrap gap-6 text-gray-600 mb-8 text-sm">
-//           <span>Created: {lesson.createdAt}</span>
-//           <span>Updated: {lesson.updatedAt}</span>
-//           <span>Views: {viewsCount.toLocaleString()}</span>
-//           <span>Estimated reading: {lesson.readingTime || "5 min"}</span>
-//         </div>
-
-//         {/* Author Card */}
-//         <div className="flex flex-col sm:flex-row items-center gap-4 mb-8 p-5 border rounded-2xl shadow-md bg-white hover:shadow-xl transition">
-//           <img
-//             src={lesson.authorImage || "/default-avatar.png"}
-//             alt="Author"
-//             className="w-20 h-20 rounded-full object-cover shadow-md"
-//           />
-//           <div className="flex-1">
-//             <p className="font-semibold text-lg">{lesson.authorName}</p>
-//             <p className="text-gray-600">
-//               Total Lessons: {lesson.totalLessons || 0}
-//             </p>
-//             <Button
-//               className="mt-3 bg-gray-200 text-black hover:bg-gray-300"
-//               onClick={() =>
-//                 (window.location.href = `/author/${lesson.authorId}`)
-//               }
-//             >
-//               View all lessons by author
-//             </Button>
+//           {/* Metadata */}
+//           <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+//             <span>Category: {lesson.category}</span>
+//             <span>Tone: {lesson.tone}</span>
+//             <span>Created: {lesson.createdAt}</span>
+//             <span>Updated: {lesson.updatedAt}</span>
 //           </div>
-//         </div>
 
-//         {/* Stats & Engagement */}
-//         <div className="flex flex-wrap gap-6 items-center mb-8">
-//           <span className="flex items-center gap-1 text-lg">
-//             <Heart className="text-red-500" />{" "}
-//             {liked ? lesson.likes + 1 : lesson.likes || 0}
-//           </span>
-//           <span className="flex items-center gap-1 text-lg">
-//             <Bookmark className="text-yellow-500" />{" "}
-//             {favorited ? lesson.favorites + 1 : lesson.favorites || 0}
-//           </span>
-//           <span className="flex items-center gap-1 text-lg">
-//             👀 {viewsCount.toLocaleString()}
-//           </span>
-//         </div>
-
-//         {/* Interaction Buttons */}
-//         <div className="flex flex-wrap gap-3 mb-10">
-//           <Button onClick={() => setFavorited(!favorited)}>
-//             <Bookmark /> {favorited ? "Saved" : "Save to Favorites"}
-//           </Button>
-//           <Button onClick={() => setLiked(!liked)}>
-//             <Heart /> {liked ? "Liked" : "Like"}
-//           </Button>
-//           <Button onClick={() => alert("Report clicked")}>
-//             <Flag /> Report Lesson
-//           </Button>
-//           <Button
-//             onClick={() => navigator.clipboard.writeText(window.location.href)}
-//           >
-//             <Share2 /> Share
-//           </Button>
-//         </div>
-
-//         {/* Comments Section */}
-//         <div className="mb-10">
-//           <h2 className="text-2xl font-semibold mb-4">Comments</h2>
-//           <div className="space-y-3">
-//             {comments.map((c, idx) => (
-//               <div key={idx} className="p-3 bg-gray-100 rounded-xl shadow-sm">
-//                 <p className="font-semibold">{c.user}</p>
-//                 <p className="text-gray-700">{c.text}</p>
-//               </div>
-//             ))}
+//           {/* Stats */}
+//           <div className="flex gap-6 mb-4 text-gray-600">
+//             <span>❤️ {lesson.likes}</span>
+//             <span>🔖 {lesson.favorites}</span>
+//             <span>👀 {Math.floor(Math.random() * 10000)}</span>
 //           </div>
-//           {user && (
-//             <div className="mt-4 flex flex-col sm:flex-row gap-3">
-//               <input
-//                 className="flex-1 border border-gray-300 p-3 rounded-xl focus:ring-2 focus:ring-yellow-400"
-//                 placeholder="Write a comment..."
-//                 value={commentInput}
-//                 onChange={(e) => setCommentInput(e.target.value)}
-//               />
-//               <Button
-//                 onClick={() => {
-//                   if (commentInput.trim()) {
-//                     setComments([
-//                       ...comments,
-//                       { user: user.name || "You", text: commentInput },
-//                     ]);
-//                     setCommentInput("");
-//                   }
-//                 }}
-//               >
-//                 Post Comment
-//               </Button>
+
+//           {/* Interaction Buttons */}
+//           <div className="flex flex-wrap gap-4 mb-6">
+//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 transition">
+//               <FaRegHeart /> Like
+//             </button>
+//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition">
+//               <FaRegBookmark /> Save
+//             </button>
+//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-100 hover:bg-yellow-200 transition">
+//               <FaFlag /> Report
+//             </button>
+//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 hover:bg-green-200 transition">
+//               <FaShareAlt /> Share
+//             </button>
+//           </div>
+
+//           {/* Author Card */}
+//           <div className="flex items-center gap-4 border-t pt-4">
+//             <img
+//               src={lesson.authorImage}
+//               className="h-12 w-12 rounded-full"
+//               alt="author"
+//             />
+//             <div>
+//               <p className="font-semibold">{lesson.author}</p>
+//               <p className="text-sm text-gray-500">Total Lessons: 12</p>
+//               <button className="text-indigo-600 text-sm hover:underline mt-1">
+//                 View all lessons by this author
+//               </button>
 //             </div>
-//           )}
-//         </div>
-
-//         {/* Similar Lessons */}
-//         <div>
-//           <h2 className="text-2xl font-semibold mb-4">Similar Lessons</h2>
-//           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-//             {similarLessons.map((l) => (
-//               <div
-//                 key={l.id}
-//                 className="border p-4 rounded-2xl shadow-md hover:shadow-xl transition cursor-pointer"
-//               >
-//                 {l.image && (
-//                   <img
-//                     src={l.image}
-//                     alt={l.title}
-//                     className="w-full h-36 object-cover rounded-lg mb-3"
-//                   />
-//                 )}
-//                 <p className="font-semibold mb-2 text-lg">{l.title}</p>
-//                 <div className="flex flex-wrap gap-2 mb-2">
-//                   <Badge color="blue">{l.category}</Badge>
-//                   <Badge color="gray">{l.tone}</Badge>
-//                 </div>
-//                 <Button
-//                   className="mt-2 w-full text-sm"
-//                   onClick={() => (window.location.href = `/lesson/${l.id}`)}
-//                 >
-//                   View Lesson
-//                 </Button>
-//               </div>
-//             ))}
 //           </div>
 //         </div>
 //       </div>
-//     </div>
+
+//       {/* Similar Lessons */}
+//       <h2 className="text-2xl font-bold mt-10 mb-6 text-gray-800">
+//         Similar Lessons
+//       </h2>
+//       <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+//         {[1, 2, 3, 4, 5, 6].map((i) => (
+//           <div key={i} className="bg-white rounded-xl shadow-md p-4">
+//             <img
+//               src="https://i.ibb.co/4pDNDk1/avatar.png"
+//               alt="lesson"
+//               className="w-full h-36 object-cover rounded-lg mb-3"
+//             />
+//             <h3 className="font-semibold text-gray-800">Lesson Title {i}</h3>
+//             <p className="text-xs text-gray-500">Category</p>
+//           </div>
+//         ))}
+//       </div>
+//     </section>
 //   );
-// };
+// }
 
-// export default LessonDetails;
-import React from "react";
-import useAxiosSecure from "../../Hooks/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import LoadingSpinner from "../LoadingSpenner/LoadingSpenner";
+import React, { useState } from "react";
+import {
+  FaHeart,
+  FaRegHeart,
+  FaBookmark,
+  FaRegBookmark,
+  FaFlag,
+  FaShareAlt,
+} from "react-icons/fa";
 
-const LessonDetails = () => {
-  const { id } = useParams();
-  const axiosSecure = useAxiosSecure();
+export default function LessonDetails() {
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
 
-  const { data: lesson, isPending } = useQuery({
-    queryKey: ["lesson", id],
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/lessons/${id}`);
-      return res.data;
-    },
-  });
-  if (isPending) return <LoadingSpinner></LoadingSpinner>;
+  const lesson = {
+    title: "The Art of Staying Consistent",
+    description:
+      "Consistency is the key to success. In this lesson, I share my personal journey of building habits that stick...",
+    category: "Personal Growth",
+    tone: "Motivational",
+    image: "https://i.ibb.co/4pDNDk1/avatar.png",
+    author: "Abdul Majid",
+    authorImage: "https://i.ibb.co/4pDNDk1/avatar.png",
+    createdAt: "2025-12-09",
+    updatedAt: "2025-12-10",
+    likes: 1200,
+    favorites: 342,
+    premium: false,
+  };
+
+  const isPremiumUser = false; // Assume viewer is not premium for demo
+
+  // Premium blur content
+  const contentClass =
+    lesson.premium && !isPremiumUser ? "blur-sm relative" : "";
+
   return (
-    <div className="max-w-4xl mx-auto my-10 p-5 shadow-lg rounded-lg bg-white">
-      <img src={lesson.image} alt="" className="rounded-md mb-4" />
+    <section className="container mx-auto px-5 py-10">
+      {/* Lesson Card */}
+      <div
+        className={`rounded-xl overflow-hidden shadow-lg bg-white ${contentClass}`}
+      >
+        {lesson.premium && !isPremiumUser && (
+          <div className="absolute inset-0 flex flex-col justify-center items-center bg-white/70 z-10 text-center p-6">
+            <h2 className="text-2xl font-bold mb-4 text-gray-800">
+              ⭐ Premium Lesson
+            </h2>
+            <p className="text-gray-600 mb-4">
+              Upgrade to Premium to view this lesson.
+            </p>
+            <button className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+              Upgrade Now
+            </button>
+          </div>
+        )}
 
-      <h1 className="text-3xl font-bold mb-3">{lesson.title}</h1>
-      <p className="text-gray-600 mb-2">{lesson.description}</p>
+        <img
+          src={lesson.image}
+          alt="lesson"
+          className="w-full h-64 object-cover"
+        />
+        <div className="p-6">
+          {/* Lesson Title */}
+          <h1 className="text-3xl font-bold mb-4 text-gray-800">
+            {lesson.title}
+          </h1>
 
-      <p className="font-semibold">Category: {lesson.category}</p>
-      <p className="font-semibold">Emotional Tone: {lesson.emotionalTone}</p>
+          {/* Lesson Description */}
+          <p className="text-gray-700 mb-4">{lesson.description}</p>
 
-      <div className="mt-4 p-3 bg-gray-100 rounded-md">
-        <h3 className="font-bold mb-2">Creator</h3>
-        <p>Name: {lesson.creatorName}</p>
+          {/* Metadata */}
+          <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
+            <span>Category: {lesson.category}</span>
+            <span>Tone: {lesson.tone}</span>
+            <span>Created: {lesson.createdAt}</span>
+            <span>Updated: {lesson.updatedAt}</span>
+            <span>Visibility: Public</span>
+            <span>⏱ Estimated Reading: 5 min</span>
+          </div>
+
+          {/* Stats */}
+          <div className="flex gap-6 mb-4 text-gray-600">
+            <span>❤️ {lesson.likes}</span>
+            <span>🔖 {lesson.favorites}</span>
+            <span>👀 {Math.floor(Math.random() * 10000)}</span>
+          </div>
+
+          {/* Interaction Buttons */}
+          <div className="flex flex-wrap gap-4 mb-6">
+            <button
+              onClick={() => setLiked(!liked)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 transition"
+            >
+              {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}{" "}
+              Like
+            </button>
+            <button
+              onClick={() => setSaved(!saved)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
+            >
+              {saved ? (
+                <FaBookmark className="text-blue-500" />
+              ) : (
+                <FaRegBookmark />
+              )}{" "}
+              Save
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-100 hover:bg-yellow-200 transition">
+              <FaFlag /> Report
+            </button>
+            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 hover:bg-green-200 transition">
+              <FaShareAlt /> Share
+            </button>
+          </div>
+
+          {/* Author Card */}
+          <div className="flex items-center gap-4 border-t pt-4 mb-6">
+            <img
+              src={lesson.authorImage}
+              className="h-12 w-12 rounded-full"
+              alt="author"
+            />
+            <div>
+              <p className="font-semibold">{lesson.author}</p>
+              <p className="text-sm text-gray-500">Total Lessons: 12</p>
+              <button className="text-indigo-600 text-sm hover:underline mt-1">
+                View all lessons by this author
+              </button>
+            </div>
+          </div>
+
+          {/* Comments Section (Static UI) */}
+          <div className="border-t pt-4">
+            <h2 className="text-xl font-bold mb-4">Comments</h2>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="mb-4">
+                <p className="font-semibold">User {i}</p>
+                <p className="text-gray-700">
+                  This is a sample comment for the lesson.
+                </p>
+              </div>
+            ))}
+            <textarea
+              placeholder="Add a comment..."
+              className="w-full p-3 border border-gray-300 rounded-lg mb-2"
+            />
+            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+              Post Comment
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  );
-};
 
-export default LessonDetails;
+      {/* Similar Lessons */}
+      <h2 className="text-2xl font-bold mt-10 mb-6 text-gray-800">
+        Similar Lessons
+      </h2>
+      <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
+        {[1, 2, 3, 4, 5, 6].map((i) => (
+          <div key={i} className="bg-white rounded-xl shadow-md p-4">
+            <img
+              src="https://i.ibb.co/4pDNDk1/avatar.png"
+              alt="lesson"
+              className="w-full h-36 object-cover rounded-lg mb-3"
+            />
+            <h3 className="font-semibold text-gray-800">Lesson Title {i}</h3>
+            <p className="text-xs text-gray-500">Category</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}

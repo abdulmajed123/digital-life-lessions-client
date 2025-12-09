@@ -32,6 +32,8 @@ const Register = () => {
           email: email,
           displayName: name,
           photoURL: photoURL,
+          role: "user",
+          isPremium: false,
         };
         axiosSecure.post("/users", userInfo).then((res) => {
           if (res.data.insertedId) {

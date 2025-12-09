@@ -16,11 +16,16 @@ import PublicLessons from "../Pages/PuplicLessons/PublicLessons";
 import LessonDetails from "../Component/LessonDetails/LessonDetails";
 import LessonUpdate from "../Component/LessonUpdate/LessonUpdate";
 import ManageUsers from "../Pages/Dashboard/ManageUsers/ManageUsers";
+import ManageLessons from "../Pages/Dashboard/ManageLessons/ManageLessons";
+import ReportedLessons from "../Pages/Dashboard/ReportedLessons/ReportedLessons";
+import ErrorPage from "../Component/ErrorPage/ErrorPage";
+import PaymentCancel from "../Pages/Dashboard/Profile/PaymentCancel/PaymentCancel";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout></RootLayout>,
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         index: true,
@@ -59,10 +64,15 @@ const router = createBrowserRouter([
         <DashboardLayout></DashboardLayout>
       </PrivateRoutes>
     ),
+    errorElement: <ErrorPage></ErrorPage>,
     children: [
       {
         path: "payment-success",
         element: <PaymentSuccess></PaymentSuccess>,
+      },
+      {
+        path: "payment-cancel",
+        element: <PaymentCancel></PaymentCancel>,
       },
       {
         path: "add-lesson",
@@ -83,6 +93,14 @@ const router = createBrowserRouter([
       {
         path: "manage-user",
         element: <ManageUsers></ManageUsers>,
+      },
+      {
+        path: "manage-lesson",
+        element: <ManageLessons></ManageLessons>,
+      },
+      {
+        path: "reported-lessons",
+        element: <ReportedLessons></ReportedLessons>,
       },
       {
         path: "profile",
