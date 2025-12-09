@@ -33,7 +33,7 @@ export default function ManageUsers() {
 
   const handleMakeAdmin = (user) => {
     const roleInfo = {
-      role: "Admin",
+      role: "admin",
     };
     axiosSecure.patch(`/users/${user._id}`, roleInfo).then((res) => {
       if (res.data.modifiedCount) {
@@ -93,7 +93,22 @@ export default function ManageUsers() {
                 <td className="p-3">{user.role}</td>
                 <td className="p-3">{userLessons.length}</td>
                 <td className="p-3 flex gap-2 justify-end">
-                  {user.role === "admin" ? (
+                  {user.role === "admin" && (
+                    <button
+                      onClick={() => handleRemoveAdmin(user)}
+                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+                    >
+                      Remove
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => handleMakeAdmin(user)}
+                    className="px-3 py-1 bg-red-500 text-white rounded "
+                  >
+                    Promote
+                  </button>
+                  {/* {user.role === "Admin" ? (
                     <button
                       onClick={() => handleMakeAdmin(user)}
                       className="px-3 py-1 bg-red-500 text-white rounded "
@@ -107,7 +122,7 @@ export default function ManageUsers() {
                     >
                       Promote
                     </button>
-                  )}
+                  )} */}
                   <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
                     Delete
                   </button>

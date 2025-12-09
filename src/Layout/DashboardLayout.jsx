@@ -11,8 +11,12 @@ import {
   MdLibraryBooks,
 } from "react-icons/md";
 import { Link, Outlet } from "react-router";
+import useRole from "../Hooks/useRole";
+import image from "../assets/image.png";
 
 const DashboardLayout = () => {
+  const { role } = useRole();
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -57,8 +61,13 @@ const DashboardLayout = () => {
           <ul className="menu w-full grow">
             {/* List item */}
             <li>
+              <Link to="/">
+                <img src={image} className="w-16 h-10" alt="" />
+              </Link>
+            </li>
+            <li>
               <Link
-                to="/"
+                to="/dashboard"
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Home Page"
               >
@@ -115,40 +124,49 @@ const DashboardLayout = () => {
               </Link>
             </li>
 
-            <li>
-              <Link
-                to="/dashboard/manage-user"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Manage User"
-              >
-                {/* Home icon */}
-                <FaUsers size={22} />
-                <span className="is-drawer-close:hidden">Manage User</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/dashboard/manage-lesson"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Manage Lessons"
-              >
-                {/* Home icon */}
-                <FaBook size={22} />
-                <span className="is-drawer-close:hidden">Manage Lessons</span>
-              </Link>
-            </li>
+            {role === "admin" && (
+              <>
+                <li>
+                  <Link
+                    to="/dashboard/manage-user"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Manage User"
+                  >
+                    {/* Home icon */}
+                    <FaUsers size={22} />
+                    <span className="is-drawer-close:hidden">Manage User</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard/manage-lesson"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Manage Lessons"
+                  >
+                    {/* Home icon */}
+                    <FaBook size={22} />
+                    <span className="is-drawer-close:hidden">
+                      Manage Lessons
+                    </span>
+                  </Link>
+                </li>
 
-            <li>
-              <Link
-                to="/dashboard/reported-lessons"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Reported Lessons"
-              >
-                {/* Home icon */}
-                <FaExclamationTriangle size={22} />
-                <span className="is-drawer-close:hidden">Reported Lessons</span>
-              </Link>
-            </li>
+                <li>
+                  <Link
+                    to="/dashboard/reported-lessons"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Reported Lessons"
+                  >
+                    {/* Home icon */}
+                    <FaExclamationTriangle size={22} />
+                    <span className="is-drawer-close:hidden">
+                      Reported Lessons
+                    </span>
+                  </Link>
+                </li>
+              </>
+            )}
+
             <li>
               <Link
                 to="/dashboard/profile"
@@ -158,6 +176,17 @@ const DashboardLayout = () => {
                 {/* Home icon */}
                 <FaUserCircle size={22} />
                 <span className="is-drawer-close:hidden">Profile</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/dashboard/admin-profile"
+                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                data-tip="Admin Profile"
+              >
+                {/* Home icon */}
+                <FaUserCircle size={22} />
+                <span className="is-drawer-close:hidden">Admin Profile</span>
               </Link>
             </li>
 

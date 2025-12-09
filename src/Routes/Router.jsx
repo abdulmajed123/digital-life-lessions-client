@@ -11,7 +11,7 @@ import MyLessons from "../Pages/Dashboard/MyLessons/MyLessons";
 import PremiumPage from "../Pages/PremiumPage/PremiumPage";
 import Profile from "../Pages/Dashboard/Profile/Profile";
 import MyFavorite from "../Pages/Dashboard/MyFavorite/MyFavorite";
-import PaymentSuccess from "../Pages/Dashboard/Profile/PaymentSuccess/PaymentSuccess";
+import PaymentSuccess from "../Pages/Dashboard/Payment/PaymentSuccess/PaymentSuccess";
 import PublicLessons from "../Pages/PuplicLessons/PublicLessons";
 import LessonDetails from "../Component/LessonDetails/LessonDetails";
 import LessonUpdate from "../Component/LessonUpdate/LessonUpdate";
@@ -19,7 +19,9 @@ import ManageUsers from "../Pages/Dashboard/ManageUsers/ManageUsers";
 import ManageLessons from "../Pages/Dashboard/ManageLessons/ManageLessons";
 import ReportedLessons from "../Pages/Dashboard/ReportedLessons/ReportedLessons";
 import ErrorPage from "../Component/ErrorPage/ErrorPage";
-import PaymentCancel from "../Pages/Dashboard/Profile/PaymentCancel/PaymentCancel";
+import PaymentCancel from "../Pages/Dashboard/Payment/PaymentCancel/PaymentCancel";
+import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
+import AdminProfile from "../Pages/Dashboard/Profile/AdminProfile";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +68,14 @@ const router = createBrowserRouter([
     ),
     errorElement: <ErrorPage></ErrorPage>,
     children: [
+      {
+        index: true,
+        element: <DashboardHome></DashboardHome>,
+      },
+      {
+        path: "admin-profile",
+        element: <AdminProfile></AdminProfile>,
+      },
       {
         path: "payment-success",
         element: <PaymentSuccess></PaymentSuccess>,

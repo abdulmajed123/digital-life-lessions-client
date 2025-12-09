@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router";
 import useAuth from "../../Hooks/useAuth";
+import image from "../../assets/image.png";
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
@@ -63,6 +64,7 @@ const Navbar = () => {
         </div>
 
         <Link to="/" className="btn btn-ghost text-xl">
+          <img src={image} className="w-10 h-10" alt="" />
           Life Lessons
         </Link>
       </div>
