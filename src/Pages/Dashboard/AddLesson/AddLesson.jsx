@@ -194,9 +194,9 @@ const AddLesson = ({ currentUser }) => {
         image: imageURL,
         privacy,
         accessLevel,
-        name: user?.displayName,
-        email: user?.email,
-        creatorPhoto: user?.photoURL,
+        authorName: user?.displayName,
+        authorEmail: user?.email,
+        authorPhoto: user?.photoURL,
         createdAt: new Date(),
       };
 

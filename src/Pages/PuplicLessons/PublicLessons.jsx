@@ -120,12 +120,14 @@ const PublicLessons = () => {
                   {/* Creator Info */}
                   <div className="flex items-center gap-3 mt-3">
                     <img
-                      src={lesson.creatorPhoto}
+                      src={lesson.authorPhoto}
                       alt="creator"
                       className="w-10 h-10 rounded-full object-cover"
                     />
                     <div>
-                      <p className="font-semibold text-sm">{lesson.name}</p>
+                      <p className="font-semibold text-sm">
+                        {lesson.authorName}
+                      </p>
                       <p className="text-xs text-gray-500">
                         {new Date(lesson.createdAt).toLocaleDateString()}
                       </p>

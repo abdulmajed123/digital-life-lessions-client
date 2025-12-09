@@ -1,118 +1,4 @@
-// import React from "react";
-// import {
-//   FaHeart,
-//   FaRegHeart,
-//   FaBookmark,
-//   FaRegBookmark,
-//   FaFlag,
-//   FaShareAlt,
-// } from "react-icons/fa";
-
-// export default function LessonDetails() {
-//   const lesson = {
-//     title: "The Art of Staying Consistent",
-//     description:
-//       "Consistency is the key to success. In this lesson, I share my personal journey of building habits that stick...",
-//     category: "Personal Growth",
-//     tone: "Motivational",
-//     image: "https://i.ibb.co/4pDNDk1/avatar.png",
-//     author: "Abdul Majid",
-//     authorImage: "https://i.ibb.co/4pDNDk1/avatar.png",
-//     createdAt: "2025-12-09",
-//     updatedAt: "2025-12-10",
-//     likes: 1200,
-//     favorites: 342,
-//   };
-
-//   return (
-//     <section className="container mx-auto px-5 py-10">
-//       {/* Lesson Card */}
-//       <div className="rounded-xl overflow-hidden shadow-lg bg-white">
-//         <img
-//           src={lesson.image}
-//           alt="lesson"
-//           className="w-full h-64 object-cover"
-//         />
-//         <div className="p-6">
-//           {/* Lesson Title */}
-//           <h1 className="text-3xl font-bold mb-4 text-gray-800">
-//             {lesson.title}
-//           </h1>
-
-//           {/* Lesson Description */}
-//           <p className="text-gray-700 mb-4">{lesson.description}</p>
-
-//           {/* Metadata */}
-//           <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
-//             <span>Category: {lesson.category}</span>
-//             <span>Tone: {lesson.tone}</span>
-//             <span>Created: {lesson.createdAt}</span>
-//             <span>Updated: {lesson.updatedAt}</span>
-//           </div>
-
-//           {/* Stats */}
-//           <div className="flex gap-6 mb-4 text-gray-600">
-//             <span>❤️ {lesson.likes}</span>
-//             <span>🔖 {lesson.favorites}</span>
-//             <span>👀 {Math.floor(Math.random() * 10000)}</span>
-//           </div>
-
-//           {/* Interaction Buttons */}
-//           <div className="flex flex-wrap gap-4 mb-6">
-//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 transition">
-//               <FaRegHeart /> Like
-//             </button>
-//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition">
-//               <FaRegBookmark /> Save
-//             </button>
-//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-100 hover:bg-yellow-200 transition">
-//               <FaFlag /> Report
-//             </button>
-//             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 hover:bg-green-200 transition">
-//               <FaShareAlt /> Share
-//             </button>
-//           </div>
-
-//           {/* Author Card */}
-//           <div className="flex items-center gap-4 border-t pt-4">
-//             <img
-//               src={lesson.authorImage}
-//               className="h-12 w-12 rounded-full"
-//               alt="author"
-//             />
-//             <div>
-//               <p className="font-semibold">{lesson.author}</p>
-//               <p className="text-sm text-gray-500">Total Lessons: 12</p>
-//               <button className="text-indigo-600 text-sm hover:underline mt-1">
-//                 View all lessons by this author
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-
-//       {/* Similar Lessons */}
-//       <h2 className="text-2xl font-bold mt-10 mb-6 text-gray-800">
-//         Similar Lessons
-//       </h2>
-//       <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
-//         {[1, 2, 3, 4, 5, 6].map((i) => (
-//           <div key={i} className="bg-white rounded-xl shadow-md p-4">
-//             <img
-//               src="https://i.ibb.co/4pDNDk1/avatar.png"
-//               alt="lesson"
-//               className="w-full h-36 object-cover rounded-lg mb-3"
-//             />
-//             <h3 className="font-semibold text-gray-800">Lesson Title {i}</h3>
-//             <p className="text-xs text-gray-500">Category</p>
-//           </div>
-//         ))}
-//       </div>
-//     </section>
-//   );
-// }
-
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FaHeart,
   FaRegHeart,
@@ -121,27 +7,91 @@ import {
   FaFlag,
   FaShareAlt,
 } from "react-icons/fa";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router";
+import LoadingSpinner from "../LoadingSpenner/LoadingSpenner";
+import useAuth from "../../Hooks/useAuth";
+import { toast } from "react-toastify";
 
 export default function LessonDetails() {
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
+  const { user } = useAuth();
+  const { id, lessonId } = useParams();
+  const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
-  const lesson = {
-    title: "The Art of Staying Consistent",
-    description:
-      "Consistency is the key to success. In this lesson, I share my personal journey of building habits that stick...",
-    category: "Personal Growth",
-    tone: "Motivational",
-    image: "https://i.ibb.co/4pDNDk1/avatar.png",
-    author: "Abdul Majid",
-    authorImage: "https://i.ibb.co/4pDNDk1/avatar.png",
-    createdAt: "2025-12-09",
-    updatedAt: "2025-12-10",
-    likes: 1200,
-    favorites: 342,
-    premium: false,
+  const { data: lessons = [] } = useQuery({
+    queryKey: ["lessons", lessonId],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/lessons/similar/${lessonId}`);
+      return res.data;
+    },
+  });
+
+  console.log(lessons);
+  const { data: lesson, isPending } = useQuery({
+    queryKey: ["lesson", id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/lessons/${id}`);
+      return res.data;
+    },
+  });
+
+  const handleLike = async () => {
+    if (!user) {
+      toast.info("Please log in to like");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await axiosSecure.patch(`/lessons/${lesson._id}/like`, {
+        userId: user._id,
+      });
+
+      if (res.data.success) {
+        setLiked(!liked);
+        // Update UI in real-time
+        lesson.likesCount = res.data.likesCount;
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to update like");
+    }
   };
 
+  const handleReport = async () => {
+    if (!user) {
+      toast.info("Please log in to report");
+      navigate("/login");
+      return;
+    }
+
+    const reason = prompt(
+      "Report Reason:\n1. Inappropriate Content\n2. Hate Speech or Harassment\n3. Misleading or False Info\n4. Spam or Promotional Content\n5. Sensitive or Disturbing Content\n6. Other"
+    );
+
+    if (!reason) return;
+
+    try {
+      await axiosSecure.post("/lessonsReports", {
+        lessonId: lesson._id,
+        reporterUserId: user._id,
+        reportedUserEmail: lesson.authorEmail,
+        reason,
+        timestamp: new Date(),
+      });
+
+      toast.success("Lesson reported successfully!");
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to report lesson");
+    }
+  };
+
+  if (isPending) return <LoadingSpinner></LoadingSpinner>;
   const isPremiumUser = false; // Assume viewer is not premium for demo
 
   // Premium blur content
@@ -185,7 +135,7 @@ export default function LessonDetails() {
           {/* Metadata */}
           <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
             <span>Category: {lesson.category}</span>
-            <span>Tone: {lesson.tone}</span>
+            <span>Tone: {lesson.emotionalTone}</span>
             <span>Created: {lesson.createdAt}</span>
             <span>Updated: {lesson.updatedAt}</span>
             <span>Visibility: Public</span>
@@ -194,7 +144,7 @@ export default function LessonDetails() {
 
           {/* Stats */}
           <div className="flex gap-6 mb-4 text-gray-600">
-            <span>❤️ {lesson.likes}</span>
+            <span>❤️ {lesson.likesCount}</span>
             <span>🔖 {lesson.favorites}</span>
             <span>👀 {Math.floor(Math.random() * 10000)}</span>
           </div>
@@ -202,7 +152,8 @@ export default function LessonDetails() {
           {/* Interaction Buttons */}
           <div className="flex flex-wrap gap-4 mb-6">
             <button
-              onClick={() => setLiked(!liked)}
+              // onClick={() => setLiked(!liked)}
+              onClick={handleLike}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 transition"
             >
               {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}{" "}
@@ -219,7 +170,10 @@ export default function LessonDetails() {
               )}{" "}
               Save
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-100 hover:bg-yellow-200 transition">
+            <button
+              onClick={handleReport}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-100 hover:bg-yellow-200 transition"
+            >
               <FaFlag /> Report
             </button>
             <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-100 hover:bg-green-200 transition">
@@ -230,13 +184,15 @@ export default function LessonDetails() {
           {/* Author Card */}
           <div className="flex items-center gap-4 border-t pt-4 mb-6">
             <img
-              src={lesson.authorImage}
+              src={lesson.authorPhoto}
               className="h-12 w-12 rounded-full"
               alt="author"
             />
             <div>
-              <p className="font-semibold">{lesson.author}</p>
-              <p className="text-sm text-gray-500">Total Lessons: 12</p>
+              <p className="font-semibold">{lesson.authorName}</p>
+              <p className="text-sm text-gray-500">
+                Total Lessons: {lesson.totalLessons || 0}
+              </p>
               <button className="text-indigo-600 text-sm hover:underline mt-1">
                 View all lessons by this author
               </button>
@@ -266,12 +222,12 @@ export default function LessonDetails() {
       </div>
 
       {/* Similar Lessons */}
-      <h2 className="text-2xl font-bold mt-10 mb-6 text-gray-800">
+      <h2 className="text-2xl text-center font-bold mt-10 mb-6 text-gray-800">
         Similar Lessons
       </h2>
       <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
-        {[1, 2, 3, 4, 5, 6].map((i) => (
-          <div key={i} className="bg-white rounded-xl shadow-md p-4">
+        {lessons.map((lesson) => (
+          <div key={lesson._id} className="bg-white rounded-xl shadow-md p-4">
             <img
               src="https://i.ibb.co/4pDNDk1/avatar.png"
               alt="lesson"

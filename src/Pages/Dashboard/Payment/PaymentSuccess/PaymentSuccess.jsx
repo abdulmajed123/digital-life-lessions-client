@@ -19,7 +19,7 @@ const PaymentSuccess = () => {
   }, [sessionId, axiosSecure]);
   return (
     <div>
-      <h2>Payment Successful! 🎉</h2>
+      <h2>Payment Successful! </h2>
     </div>
   );
 };
