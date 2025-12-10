@@ -16,7 +16,6 @@ import { toast } from "react-toastify";
 
 export default function LessonDetails() {
   const [liked, setLiked] = useState(false);
-  const [saved, setSaved] = useState(false);
   const { user } = useAuth();
   const { id, lessonId } = useParams();
   const axiosSecure = useAxiosSecure();
@@ -59,6 +58,67 @@ export default function LessonDetails() {
     } catch (err) {
       console.log(err);
       toast.error("Failed to update like");
+    }
+  };
+
+  // Check if lesson already saved
+  // const { data: isFavorite, refetch: refetchFavorite } = useQuery({
+  //   queryKey: ["favorite-status", id, user?.email],
+  //   queryFn: async () => {
+  //     const res = await axiosSecure.get(`/favorites/${id}/${user.email}`);
+  //     return res.data;
+  //   },
+  //   enabled: !!user?.email,
+  // });
+
+  const { data: favoriteData = {}, refetch: refetchFavorite } = useQuery({
+    queryKey: ["favorite-status", id, user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/favorites/${id}/${user.email}`);
+      return res.data; // returns { isFavorite, favoritesCount }
+    },
+    enabled: !!user?.email,
+  });
+
+  const isFavorite = favoriteData.isFavorite;
+  const favoritesCount = favoriteData.favoritesCount;
+
+  const handleSave = async () => {
+    if (!user) {
+      toast.info("Please log in to save lessons");
+      navigate("/login");
+      return;
+    }
+
+    try {
+      const res = await axiosSecure.post("/favorites", {
+        lessonId: id,
+        userEmail: user.email,
+      });
+
+      if (res.data.insertedId) {
+        toast.success("Lesson saved!");
+        refetchFavorite();
+      } else {
+        toast.info("Already saved");
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to save lesson");
+    }
+  };
+
+  const handleUnsave = async () => {
+    try {
+      await axiosSecure.delete("/favorites", {
+        data: { lessonId: id, userEmail: user.email },
+      });
+
+      toast.success("Removed from favorites");
+      refetchFavorite();
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to remove favorite");
     }
   };
 
@@ -145,7 +205,7 @@ export default function LessonDetails() {
           {/* Stats */}
           <div className="flex gap-6 mb-4 text-gray-600">
             <span>❤️ {lesson.likesCount}</span>
-            <span>🔖 {lesson.favorites}</span>
+            <span>🔖 {favoritesCount || 0}</span>
             <span>👀 {Math.floor(Math.random() * 10000)}</span>
           </div>
 
@@ -159,7 +219,7 @@ export default function LessonDetails() {
               {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}{" "}
               Like
             </button>
-            <button
+            {/* <button
               onClick={() => setSaved(!saved)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
             >
@@ -169,7 +229,19 @@ export default function LessonDetails() {
                 <FaRegBookmark />
               )}{" "}
               Save
+            </button> */}
+            <button
+              onClick={() => (isFavorite ? handleUnsave() : handleSave())}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
+            >
+              {isFavorite ? (
+                <FaBookmark className="text-blue-500" />
+              ) : (
+                <FaRegBookmark />
+              )}
+              {isFavorite ? "Saved" : "Save"}
             </button>
+
             <button
               onClick={handleReport}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-100 hover:bg-yellow-200 transition"
