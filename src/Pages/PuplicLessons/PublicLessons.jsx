@@ -7,13 +7,15 @@ import LoadingSpinner from "../../Component/LoadingSpenner/LoadingSpenner";
 const PublicLessons = () => {
   const axiosSecure = useAxiosSecure();
 
-  const { data: lessons = [], isPending } = useQuery({
+  const { data: lessons = [], isLoading } = useQuery({
     queryKey: ["lessons"],
     queryFn: async () => {
       const res = await axiosSecure.get("/lessons");
       return res.data;
     },
   });
+
+  console.log(lessons);
 
   // Example structure — API আসলে তোমার আসবে
   // const lessons = [
@@ -46,7 +48,7 @@ const PublicLessons = () => {
   //     image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66",
   //   },
   // ];
-  if (isPending) return <LoadingSpinner></LoadingSpinner>;
+  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
   const currentUserIsPremium = false; // example
 
   return (

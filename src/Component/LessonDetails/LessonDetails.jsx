@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   FaHeart,
   FaRegHeart,
@@ -17,26 +17,44 @@ import { toast } from "react-toastify";
 export default function LessonDetails() {
   const [liked, setLiked] = useState(false);
   const { user } = useAuth();
-  const { id, lessonId } = useParams();
+  const { id } = useParams(); // Only id param
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
-  const { data: lessons = [] } = useQuery({
-    queryKey: ["lessons", lessonId],
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/lessons/similar/${lessonId}`);
-      return res.data;
-    },
-  });
-
-  console.log(lessons);
-  const { data: lesson, isPending } = useQuery({
+  // Fetch lesson
+  const { data: lesson, isLoading } = useQuery({
     queryKey: ["lesson", id],
     queryFn: async () => {
       const res = await axiosSecure.get(`/lessons/${id}`);
       return res.data;
     },
+    enabled: !!id,
   });
+
+  // Fetch similar lessons
+  const { data: similarLessons = [] } = useQuery({
+    queryKey: ["similar-lessons", id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/lessons/similar/${id}`);
+      return res.data;
+    },
+    enabled: !!id,
+  });
+
+  // Favorite status
+  const { data: favoriteData = {}, refetch: refetchFavorite } = useQuery({
+    queryKey: ["favorite-status", id, user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/favorites/${id}/${user.email}`);
+      return res.data;
+    },
+    enabled: !!user?.email && !!id,
+  });
+
+  const isFavorite = favoriteData?.isFavorite || false;
+  const favoritesCount = favoriteData?.favoritesCount || 0;
+
+  if (isLoading || !lesson) return <LoadingSpinner />;
 
   const handleLike = async () => {
     if (!user) {
@@ -49,11 +67,9 @@ export default function LessonDetails() {
       const res = await axiosSecure.patch(`/lessons/${lesson._id}/like`, {
         userId: user._id,
       });
-
       if (res.data.success) {
         setLiked(!liked);
-        // Update UI in real-time
-        lesson.likesCount = res.data.likesCount;
+        lesson.likesCount = res.data.likesCount; // update UI
       }
     } catch (err) {
       console.log(err);
@@ -61,27 +77,81 @@ export default function LessonDetails() {
     }
   };
 
-  // Check if lesson already saved
-  // const { data: isFavorite, refetch: refetchFavorite } = useQuery({
-  //   queryKey: ["favorite-status", id, user?.email],
-  //   queryFn: async () => {
-  //     const res = await axiosSecure.get(`/favorites/${id}/${user.email}`);
-  //     return res.data;
-  //   },
-  //   enabled: !!user?.email,
-  // });
+  // const handleSave = async () => {
+  //   if (!user) {
+  //     toast.info("Please log in to save lessons");
+  //     navigate("/login");
+  //     return;
+  //   }
+  //   try {
+  //     const res = await axiosSecure.post("/favorites", {
+  //       lessonId: id,
+  //       email: user.email,
+  //     });
 
-  const { data: favoriteData = {}, refetch: refetchFavorite } = useQuery({
-    queryKey: ["favorite-status", id, user?.email],
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/favorites/${id}/${user.email}`);
-      return res.data; // returns { isFavorite, favoritesCount }
-    },
-    enabled: !!user?.email,
-  });
+  //     if (res.data.insertedId) {
+  //       toast.success("Lesson saved!");
+  //       refetchFavorite();
+  //     } else {
+  //       toast.info("Already saved");
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Failed to save lesson");
+  //   }
+  // };
 
-  const isFavorite = favoriteData.isFavorite;
-  const favoritesCount = favoriteData.favoritesCount;
+  // const handleUnsave = async () => {
+  //   try {
+  //     await axiosSecure.delete(`/favorites/${id}/${user.email}`);
+  //     toast.success("Removed from favorites");
+  //     refetchFavorite();
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Failed to remove favorite");
+  //   }
+  // };
+
+  // const handleUnsave = async () => {
+  //   try {
+  //     await axiosSecure.delete("/favorites", {
+  //       data: { lessonId: id, email: user.email },
+  //     });
+  //     toast.success("Removed from favorites");
+  //     refetchFavorite();
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Failed to remove favorite");
+  //   }
+  // };
+
+  // const handleReport = async () => {
+  //   if (!user) {
+  //     toast.info("Please log in to report");
+  //     navigate("/login");
+  //     return;
+  //   }
+
+  //   const reason = prompt(
+  //     "Report Reason:\n1. Inappropriate Content\n2. Hate Speech or Harassment\n3. Misleading or False Info\n4. Spam or Promotional Content\n5. Sensitive or Disturbing Content\n6. Other"
+  //   );
+  //   if (!reason) return;
+
+  //   try {
+  //     await axiosSecure.post("/lessonsReports", {
+  //       lessonId: lesson._id,
+  //       reporterUserId: user._id,
+  //       reportedUserEmail: user.email,
+  //       reportedName: user.displayName,
+  //       reason,
+  //       timestamp: new Date(),
+  //     });
+  //     toast.success("Lesson reported successfully!");
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Failed to report lesson");
+  //   }
+  // };
 
   const handleSave = async () => {
     if (!user) {
@@ -93,7 +163,7 @@ export default function LessonDetails() {
     try {
       const res = await axiosSecure.post("/favorites", {
         lessonId: id,
-        userEmail: user.email,
+        email: user.email,
       });
 
       if (res.data.insertedId) {
@@ -111,7 +181,7 @@ export default function LessonDetails() {
   const handleUnsave = async () => {
     try {
       await axiosSecure.delete("/favorites", {
-        data: { lessonId: id, userEmail: user.email },
+        data: { lessonId: id, email: user.email },
       });
 
       toast.success("Removed from favorites");
@@ -129,18 +199,31 @@ export default function LessonDetails() {
       return;
     }
 
-    const reason = prompt(
+    const reasonNumber = prompt(
       "Report Reason:\n1. Inappropriate Content\n2. Hate Speech or Harassment\n3. Misleading or False Info\n4. Spam or Promotional Content\n5. Sensitive or Disturbing Content\n6. Other"
     );
 
-    if (!reason) return;
+    if (!reasonNumber) return;
+
+    // Map number to text
+    const reasonMap = {
+      1: "Inappropriate Content",
+      2: "Hate Speech or Harassment",
+      3: "Misleading or False Info",
+      4: "Spam or Promotional Content",
+      5: "Sensitive or Disturbing Content",
+      6: "Other",
+    };
+
+    const reasonText = reasonMap[reasonNumber] || "Other";
 
     try {
       await axiosSecure.post("/lessonsReports", {
         lessonId: lesson._id,
         reporterUserId: user._id,
-        reportedUserEmail: lesson.authorEmail,
-        reason,
+        reportedUserEmail: user.email,
+        reportedName: user.displayName,
+        reason: reasonText, // text saved in DB
         timestamp: new Date(),
       });
 
@@ -150,17 +233,12 @@ export default function LessonDetails() {
       toast.error("Failed to report lesson");
     }
   };
-
-  if (isPending) return <LoadingSpinner></LoadingSpinner>;
-  const isPremiumUser = false; // Assume viewer is not premium for demo
-
-  // Premium blur content
+  const isPremiumUser = false; // Demo
   const contentClass =
     lesson.premium && !isPremiumUser ? "blur-sm relative" : "";
 
   return (
     <section className="container mx-auto px-5 py-10">
-      {/* Lesson Card */}
       <div
         className={`rounded-xl overflow-hidden shadow-lg bg-white ${contentClass}`}
       >
@@ -184,52 +262,34 @@ export default function LessonDetails() {
           className="w-full h-64 object-cover"
         />
         <div className="p-6">
-          {/* Lesson Title */}
           <h1 className="text-3xl font-bold mb-4 text-gray-800">
             {lesson.title}
           </h1>
-
-          {/* Lesson Description */}
           <p className="text-gray-700 mb-4">{lesson.description}</p>
 
-          {/* Metadata */}
           <div className="flex flex-wrap gap-4 text-sm text-gray-500 mb-4">
             <span>Category: {lesson.category}</span>
             <span>Tone: {lesson.emotionalTone}</span>
             <span>Created: {lesson.createdAt}</span>
             <span>Updated: {lesson.updatedAt}</span>
             <span>Visibility: Public</span>
-            <span>⏱ Estimated Reading: 5 min</span>
           </div>
 
-          {/* Stats */}
           <div className="flex gap-6 mb-4 text-gray-600">
             <span>❤️ {lesson.likesCount}</span>
-            <span>🔖 {favoritesCount || 0}</span>
+            <span>🔖 {favoritesCount}</span>
             <span>👀 {Math.floor(Math.random() * 10000)}</span>
           </div>
 
-          {/* Interaction Buttons */}
           <div className="flex flex-wrap gap-4 mb-6">
             <button
-              // onClick={() => setLiked(!liked)}
               onClick={handleLike}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 transition"
             >
               {liked ? <FaHeart className="text-red-500" /> : <FaRegHeart />}{" "}
               Like
             </button>
-            {/* <button
-              onClick={() => setSaved(!saved)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
-            >
-              {saved ? (
-                <FaBookmark className="text-blue-500" />
-              ) : (
-                <FaRegBookmark />
-              )}{" "}
-              Save
-            </button> */}
+
             <button
               onClick={() => (isFavorite ? handleUnsave() : handleSave())}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
@@ -239,6 +299,7 @@ export default function LessonDetails() {
               ) : (
                 <FaRegBookmark />
               )}
+
               {isFavorite ? "Saved" : "Save"}
             </button>
 
@@ -253,7 +314,6 @@ export default function LessonDetails() {
             </button>
           </div>
 
-          {/* Author Card */}
           <div className="flex items-center gap-4 border-t pt-4 mb-6">
             <img
               src={lesson.authorPhoto}
@@ -270,43 +330,22 @@ export default function LessonDetails() {
               </button>
             </div>
           </div>
-
-          {/* Comments Section (Static UI) */}
-          <div className="border-t pt-4">
-            <h2 className="text-xl font-bold mb-4">Comments</h2>
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="mb-4">
-                <p className="font-semibold">User {i}</p>
-                <p className="text-gray-700">
-                  This is a sample comment for the lesson.
-                </p>
-              </div>
-            ))}
-            <textarea
-              placeholder="Add a comment..."
-              className="w-full p-3 border border-gray-300 rounded-lg mb-2"
-            />
-            <button className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
-              Post Comment
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* Similar Lessons */}
       <h2 className="text-2xl text-center font-bold mt-10 mb-6 text-gray-800">
         Similar Lessons
       </h2>
       <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-6">
-        {lessons.map((lesson) => (
+        {similarLessons.map((lesson, i) => (
           <div key={lesson._id} className="bg-white rounded-xl shadow-md p-4">
             <img
-              src="https://i.ibb.co/4pDNDk1/avatar.png"
+              src={lesson.image || "https://i.ibb.co/4pDNDk1/avatar.png"}
               alt="lesson"
               className="w-full h-36 object-cover rounded-lg mb-3"
             />
-            <h3 className="font-semibold text-gray-800">Lesson Title {i}</h3>
-            <p className="text-xs text-gray-500">Category</p>
+            <h3 className="font-semibold text-gray-800">{lesson.title}</h3>
+            <p className="text-xs text-gray-500">{lesson.category}</p>
           </div>
         ))}
       </div>

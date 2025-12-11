@@ -1,101 +1,118 @@
-import React, { useState } from "react";
+import React from "react";
+import useAuth from "../../../Hooks/useAuth";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import LoadingSpinner from "../../../Component/LoadingSpenner/LoadingSpenner";
+import { toast } from "react-toastify";
 
-export default function MyFavorite() {
-  const [favorites, setFavorites] = useState([
-    {
-      _id: "1",
-      title: "How I Learned Discipline",
-      category: "Self Growth",
-      tone: "Motivational",
-      creator: "John Doe",
-      date: "2025-01-10",
+const MyFavorite = () => {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
+  const {
+    data: favourites = [],
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["favourite", user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/favorites/${user.email}`);
+      return res.data;
     },
-    {
-      _id: "2",
-      title: "Managing Stress in Life",
-      category: "Mental Health",
-      tone: "Calming",
-      creator: "Sarah Khan",
-      date: "2025-01-05",
-    },
-  ]);
-
-  const [categoryFilter, setCategoryFilter] = useState("");
-  const [toneFilter, setToneFilter] = useState("");
-
-  const handleRemove = (id) => {
-    setFavorites(favorites.filter((item) => item._id !== id));
-  };
-
-  const filteredFavorites = favorites.filter((item) => {
-    const matchCategory = categoryFilter
-      ? item.category === categoryFilter
-      : true;
-    const matchTone = toneFilter ? item.tone === toneFilter : true;
-    return matchCategory && matchTone;
   });
 
+  const handleRemove = async (id) => {
+    try {
+      const res = await axiosSecure.delete(`/favorites/${id}`);
+
+      if (res.data.success) {
+        toast.success("Removed from favorites");
+        refetch(); // refetch data after deletion
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to remove favorite");
+    }
+  };
+
+  if (isLoading) return <LoadingSpinner></LoadingSpinner>;
   return (
     <div className="p-6">
-      <h2 className="text-3xl font-bold mb-6">❤️ My Favorites</h2>
-
-      {/* Filters */}
-      <div className="flex gap-4 mb-6">
-        <select
-          className="select select-bordered"
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-        >
-          <option value="">All Categories</option>
-          <option value="Self Growth">Self Growth</option>
-          <option value="Mental Health">Mental Health</option>
-          <option value="Career">Career</option>
-        </select>
-
-        <select
-          className="select select-bordered"
-          value={toneFilter}
-          onChange={(e) => setToneFilter(e.target.value)}
-        >
-          <option value="">All Tones</option>
-          <option value="Motivational">Motivational</option>
-          <option value="Calming">Calming</option>
-          <option value="Emotional">Emotional</option>
-        </select>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-3xl font-bold">🌟 My Favorite Lessons</h1>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto bg-white shadow rounded-lg">
-        <table className="table w-full">
-          <thead>
-            <tr className="bg-gray-100 text-gray-700">
-              <th>Lesson</th>
+      {/* Filters */}
+      <div className="bg-base-200 p-4 rounded-xl mb-6">
+        <h2 className="text-lg font-semibold mb-3">Filter Favorites</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <select className="select select-bordered w-full">
+            <option disabled selected>
+              Filter by Category
+            </option>
+            <option>Gratitude</option>
+            <option>Mistakes Learned</option>
+            <option>Life Lessons</option>
+            <option>Success</option>
+          </select>
+
+          <select className="select select-bordered w-full">
+            <option disabled selected>
+              Filter by Emotional Tone
+            </option>
+            <option>Happy</option>
+            <option>Sad</option>
+            <option>Grateful</option>
+            <option>Motivated</option>
+          </select>
+
+          <button className="btn btn-primary">Apply Filters</button>
+        </div>
+      </div>
+
+      {/* Table Container */}
+      <div className="overflow-x-auto rounded-xl shadow-lg border border-base-300">
+        <table className="table table-zebra w-full">
+          {/* Table Head */}
+          <thead className="bg-base-300 text-base font-bold">
+            <tr>
+              <th>Lesson Title</th>
               <th>Category</th>
               <th>Emotional Tone</th>
               <th>Creator</th>
-              <th>Saved On</th>
-              <th className="text-end">Actions</th>
+              <th className="text-center">Actions</th>
             </tr>
           </thead>
 
+          {/* Table Body */}
           <tbody>
-            {filteredFavorites.map((item) => (
-              <tr key={item._id} className="border-b">
-                <td className="font-medium">{item.title}</td>
-                <td>{item.category}</td>
-                <td>{item.tone}</td>
-                <td>{item.creator}</td>
-                <td>{item.date}</td>
+            {favourites.map((favourite) => (
+              <tr>
+                <td className="font-semibold">{favourite.lessonTitle}</td>
+                <td>{favourite.category}</td>
+                <td>{favourite.emotionalTone}</td>
+                <td>
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={favourite.authorImage}
+                      className="w-10 h-10 rounded-full"
+                    />
+                    <span>{favourite.creator}</span>
+                  </div>
+                </td>
 
-                <td className="text-end space-x-2">
-                  <button className="btn btn-sm btn-neutral">Details</button>
-
+                <td className="flex justify-center gap-2">
                   <button
-                    onClick={() => handleRemove(item._id)}
-                    className="btn btn-sm btn-error"
+                    onClick={() => handleRemove(favourite._id)}
+                    className="btn btn-error btn-sm"
                   >
                     Remove
                   </button>
+                  <button className="btn btn-info btn-sm">Details</button>
                 </td>
               </tr>
             ))}
@@ -104,4 +121,6 @@ export default function MyFavorite() {
       </div>
     </div>
   );
-}
+};
+
+export default MyFavorite;

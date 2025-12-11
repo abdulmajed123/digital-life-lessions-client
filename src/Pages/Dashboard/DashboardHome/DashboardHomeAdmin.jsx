@@ -8,8 +8,21 @@ import {
   FaPlusSquare,
   FaStar,
 } from "react-icons/fa";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 const DashboardHomeAdmin = () => {
+  const axiosSecure = useAxiosSecure();
+
+  const { data: lessons = [] } = useQuery({
+    queryKey: ["lessons"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/lessons");
+      return res.data;
+    },
+  });
+
+  console.log(lessons);
   // --- Mock Data for Demonstration ---
   const platformStats = {
     totalUsers: "12,500",

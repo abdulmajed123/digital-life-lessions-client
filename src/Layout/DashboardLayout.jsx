@@ -65,6 +65,7 @@ const DashboardLayout = () => {
                 <img src={image} className="w-16 h-10" alt="" />
               </Link>
             </li>
+
             <li>
               <Link
                 to="/dashboard"
@@ -88,41 +89,57 @@ const DashboardLayout = () => {
                 <span className="is-drawer-close:hidden">Home Page</span>
               </Link>
             </li>
-            <li>
-              <Link
-                to="/dashboard/add-lesson"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Add Lesson"
-              >
-                {/* Home icon */}
+            {role === "user" && (
+              <>
+                <li>
+                  <Link
+                    to="/dashboard/add-lesson"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Add Lesson"
+                  >
+                    {/* Home icon */}
 
-                <MdAddCircleOutline size={22} />
-                <span className="is-drawer-close:hidden">Add Lesson</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/dashboard/my-lessons"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="My Lessons"
-              >
-                {/* Home icon */}
-                <MdLibraryBooks size={22} />
-                <span className="is-drawer-close:hidden">My Lessons</span>
-              </Link>
-            </li>
+                    <MdAddCircleOutline size={22} />
+                    <span className="is-drawer-close:hidden">Add Lesson</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard/my-lessons"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="My Lessons"
+                  >
+                    {/* Home icon */}
+                    <MdLibraryBooks size={22} />
+                    <span className="is-drawer-close:hidden">My Lessons</span>
+                  </Link>
+                </li>
 
-            <li>
-              <Link
-                to="/dashboard/my-favorite"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="My Favorite"
-              >
-                {/* Home icon */}
-                <MdFavoriteBorder size={22} />
-                <span className="is-drawer-close:hidden">My Favorite</span>
-              </Link>
-            </li>
+                <li>
+                  <Link
+                    to="/dashboard/my-favorite"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="My Favorite"
+                  >
+                    {/* Home icon */}
+                    <MdFavoriteBorder size={22} />
+                    <span className="is-drawer-close:hidden">My Favorite</span>
+                  </Link>
+                </li>
+
+                <li>
+                  <Link
+                    to="/dashboard/profile"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Profile"
+                  >
+                    {/* Home icon */}
+                    <FaUserCircle size={22} />
+                    <span className="is-drawer-close:hidden">Profile</span>
+                  </Link>
+                </li>
+              </>
+            )}
 
             {role === "admin" && (
               <>
@@ -164,57 +181,21 @@ const DashboardLayout = () => {
                     </span>
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="/dashboard/admin-profile"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Admin Profile"
+                  >
+                    {/* Home icon */}
+                    <FaUserCircle size={22} />
+                    <span className="is-drawer-close:hidden">
+                      Admin Profile
+                    </span>
+                  </Link>
+                </li>
               </>
             )}
-
-            <li>
-              <Link
-                to="/dashboard/profile"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Profile"
-              >
-                {/* Home icon */}
-                <FaUserCircle size={22} />
-                <span className="is-drawer-close:hidden">Profile</span>
-              </Link>
-            </li>
-            <li>
-              <Link
-                to="/dashboard/admin-profile"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Admin Profile"
-              >
-                {/* Home icon */}
-                <FaUserCircle size={22} />
-                <span className="is-drawer-close:hidden">Admin Profile</span>
-              </Link>
-            </li>
-
-            {/* List item */}
-            <li>
-              <button
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Settings"
-              >
-                {/* Settings icon */}
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
-                  strokeWidth="2"
-                  fill="none"
-                  stroke="currentColor"
-                  className="my-1.5 inline-block size-4"
-                >
-                  <path d="M20 7h-9"></path>
-                  <path d="M14 17H5"></path>
-                  <circle cx="17" cy="17" r="3"></circle>
-                  <circle cx="7" cy="7" r="3"></circle>
-                </svg>
-                <span className="is-drawer-close:hidden">Settings</span>
-              </button>
-            </li>
           </ul>
         </div>
       </div>

@@ -10,14 +10,24 @@ const MyLessons = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
-  const { data: lessons = [], isPending } = useQuery({
+  // const { data: lessons = [], isPending } = useQuery({
+  //   queryKey: ["my-lessons", user?.email],
+  //   queryFn: async () => {
+  //     const res = await axiosSecure.get(`/my-lessons/${user?.email}`);
+  //     return res.data;
+  //   },
+  // });
+
+  const { data = {}, isPending } = useQuery({
     queryKey: ["my-lessons", user?.email],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/my-lessons?email=${user?.email}`);
+      const res = await axiosSecure.get(`/my-lessons/${user?.email}`);
       return res.data;
     },
+    enabled: !!user?.email,
   });
 
+  const { lessons = [] } = data;
   const handleLessonDelete = (lessonId) => {
     Swal.fire({
       title: "Are you sure?",
@@ -69,7 +79,7 @@ const MyLessons = () => {
           <tbody>
             {lessons.map((lesson) => (
               <tr key={lesson._id} className="border-b">
-                <td className="font-semibold">How I Learned Discipline</td>
+                <td className="font-semibold">{lesson.title}</td>
 
                 <td>
                   <select className="select select-bordered select-sm">
@@ -88,12 +98,25 @@ const MyLessons = () => {
                   </select>
                 </td>
 
-                <td className="text-sm">❤️ 12 • ⭐ 5 • 💾 8</td>
+                <td className="text-sm">❤️{lesson.likesCount}• ⭐ 5 • 💾 8</td>
 
-                <td>2025-01-12</td>
+                <td>
+                  {" "}
+                  {new Date(lesson.createdAt).toLocaleDateString("en-US", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </td>
 
                 <td className="text-end space-x-2">
-                  <button className="btn btn-sm btn-neutral">Details</button>
+                  <Link
+                    to={`/lesson/${lesson._id}`}
+                    className="btn btn-sm btn-neutral"
+                  >
+                    Details
+                  </Link>
                   <Link
                     to={`/dashboard/lesson-update/${lesson._id}`}
                     className="btn btn-sm btn-primary"
