@@ -113,6 +113,12 @@ const MyFavorite = () => {
                     Remove
                   </button>
                   <button className="btn btn-info btn-sm">Details</button>
+                  {/* <Link
+                    to={`/lesson/${favourite.lessonId}`} // lessonId backend থেকে লাগবে
+                    className="btn btn-info btn-sm"
+                  >
+                    Details
+                  </Link> */}
                 </td>
               </tr>
             ))}
