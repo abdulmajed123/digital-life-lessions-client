@@ -51,7 +51,7 @@ export default function LessonDetails() {
     enabled: !!user?.email && !!id,
   });
 
-  const isFavorite = favoriteData?.isFavorite || false;
+  // const isFavorite = favoriteData?.isFavorite || false;
   const favoritesCount = favoriteData?.favoritesCount || 0;
 
   if (isLoading || !lesson) return <LoadingSpinner />;
@@ -221,6 +221,7 @@ export default function LessonDetails() {
       await axiosSecure.post("/lessonsReports", {
         lessonId: lesson._id,
         reporterUserId: user._id,
+        lessonsTitle: lesson.title,
         reportedUserEmail: user.email,
         reportedName: user.displayName,
         reason: reasonText, // text saved in DB
@@ -291,16 +292,18 @@ export default function LessonDetails() {
             </button>
 
             <button
-              onClick={() => (isFavorite ? handleUnsave() : handleSave())}
+              onClick={handleSave}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
             >
-              {isFavorite ? (
-                <FaBookmark className="text-blue-500" />
-              ) : (
-                <FaRegBookmark />
-              )}
-
-              {isFavorite ? "Saved" : "Save"}
+              <FaBookmark className="text-blue-500" />
+              Save
+            </button>
+            <button
+              onClick={handleUnsave}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 hover:bg-blue-200 transition"
+            >
+              <FaRegBookmark />
+              unsave
             </button>
 
             <button

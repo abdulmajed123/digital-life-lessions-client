@@ -11,9 +11,9 @@ const PremiumPage = () => {
   const handleUpgrade = async () => {
     try {
       const res = await axiosSecure.post(`/create-checkout-session`, {
-        email: user.email,
+        email: user?.email,
       });
-
+      console.log(res.data.url);
       window.location.href = res.data.url; // Stripe Checkout page
     } catch (error) {
       console.log(error);

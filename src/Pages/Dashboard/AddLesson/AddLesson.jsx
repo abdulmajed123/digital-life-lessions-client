@@ -4,10 +4,12 @@ import { imageUpload } from "../../../Utils";
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import { toast } from "react-toastify";
+import useRole from "../../../Hooks/useRole";
 
 const AddLesson = ({ currentUser }) => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const { isPremium } = useRole();
   const { register, handleSubmit, reset } = useForm();
 
   const onSubmit = async (data) => {
@@ -37,6 +39,9 @@ const AddLesson = ({ currentUser }) => {
         authorEmail: user?.email,
         authorPhoto: user?.photoURL,
         createdAt: new Date(),
+        featured: false,
+        reviewed: false,
+        flagged: false,
       };
 
       const response = await axiosSecure.post("/lessons", lessonData);
@@ -51,7 +56,7 @@ const AddLesson = ({ currentUser }) => {
     }
   };
 
-  const isPremiumUser = currentUser?.isPremium;
+  // const isPremiumUser = currentUser?.isPremium;
 
   return (
     <div className="max-w-3xl mx-auto p-5 bg-white shadow rounded">
@@ -140,9 +145,9 @@ const AddLesson = ({ currentUser }) => {
           <select
             {...register("accessLevel", { required: true })}
             className="w-full border p-2 rounded disabled:bg-gray-200"
-            disabled={!isPremiumUser}
+            disabled={!isPremium}
             title={
-              !isPremiumUser ? "Upgrade to Premium to create paid lessons" : ""
+              !isPremium ? "Upgrade to Premium to create paid lessons" : ""
             }
           >
             <option value="Free">Free</option>

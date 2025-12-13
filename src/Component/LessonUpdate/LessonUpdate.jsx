@@ -5,10 +5,12 @@ import { useParams } from "react-router";
 import LoadingSpinner from "../LoadingSpenner/LoadingSpenner";
 import { useEffect } from "react";
 import { imageUpload } from "../../Utils";
+import useRole from "../../Hooks/useRole";
 
 export default function UpdateLesson({ isPremiumUser }) {
   const { id } = useParams();
   const axiosSecure = useAxiosSecure();
+  const { isPremium } = useRole();
   const { data: lesson, isPending } = useQuery({
     queryKey: ["lesson", id],
     queryFn: async () => {
@@ -159,9 +161,9 @@ export default function UpdateLesson({ isPremiumUser }) {
           <label className="font-semibold text-gray-700">Access Level</label>
           <select
             {...register("accessLevel", { required: true })}
-            disabled={!isPremiumUser}
+            disabled={!isPremium}
             className={`w-full border p-3 rounded-lg focus:ring-2 focus:ring-blue-500 transition ${
-              !isPremiumUser ? "bg-gray-200 cursor-not-allowed" : ""
+              !isPremium ? "bg-gray-200 cursor-not-allowed" : ""
             }`}
           >
             <option value="Free">Free</option>

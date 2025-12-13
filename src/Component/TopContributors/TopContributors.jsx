@@ -74,3 +74,58 @@ export default function TopContributors() {
     </section>
   );
 }
+
+// import { useQuery } from "@tanstack/react-query";
+// import useAxiosSecure from "../../Hooks/useAxiosSecure";
+// import LoadingSpinner from "../../Component/LoadingSpenner/LoadingSpenner";
+
+// const TopContributors = () => {
+//   const axiosSecure = useAxiosSecure();
+
+//   const { data: contributors = [], isLoading } = useQuery({
+//     queryKey: ["top-contributors-week"],
+//     queryFn: async () => {
+//       const res = await axiosSecure.get("/top-contributors-week");
+//       return res.data;
+//     },
+//   });
+
+//   if (isLoading) return <LoadingSpinner />;
+
+//   if (contributors.length === 0) return null;
+
+//   return (
+//     <div className="max-w-5xl mx-auto px-4 py-12">
+//       <h2 className="text-3xl font-bold mb-6 text-center">
+//         🌟 Top Contributors of the Week
+//       </h2>
+
+//       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+//         {contributors.map((user, index) => (
+//           <div
+//             key={user._id}
+//             className="p-5 border rounded-2xl shadow-md bg-base-100 text-center"
+//           >
+//             <img
+//               src={user.authorPhoto}
+//               alt={user.authorName}
+//               className="w-20 h-20 rounded-full mx-auto object-cover"
+//             />
+
+//             <h3 className="text-xl font-semibold mt-3">{user.authorName}</h3>
+
+//             <p className="text-sm text-gray-500">
+//               {user.totalLessons} lessons this week
+//             </p>
+
+//             <p className="mt-2 font-bold text-primary">
+//               #{index + 1} Contributor
+//             </p>
+//           </div>
+//         ))}
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TopContributors;

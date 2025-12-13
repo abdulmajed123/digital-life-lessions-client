@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { Link, NavLink } from "react-router";
 import useAuth from "../../Hooks/useAuth";
 import image from "../../assets/image.png";
+import useRole from "../../Hooks/useRole";
 
 const Navbar = () => {
   const { user, logOut } = useAuth();
   const [open, setOpen] = useState(false);
+  const { isPremium } = useRole();
+  console.log(isPremium);
 
   const handleLogOut = () => {
     logOut()
@@ -21,7 +24,7 @@ const Navbar = () => {
       <NavLink to="/public-lessons">Public Lessons</NavLink>
       {user && (
         <>
-          {user?.isPremium ? (
+          {isPremium === true ? (
             <span className="text-yellow-600 font-semibold">Premium ⭐</span>
           ) : (
             <Link to="/premium" className="text-blue-600">
