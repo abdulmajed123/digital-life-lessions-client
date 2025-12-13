@@ -1,192 +1,170 @@
-// src/pages/AdminOverview.jsx
 import React from "react";
-import {
-  FaUsers,
-  FaGlobe,
-  FaFlag,
-  FaChartLine,
-  FaPlusSquare,
-  FaStar,
-} from "react-icons/fa";
-import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import LoadingSpinner from "../../../Component/LoadingSpenner/LoadingSpenner";
 
-const DashboardHomeAdmin = () => {
+export default function DashboardHomeAdmin() {
   const axiosSecure = useAxiosSecure();
 
-  const { data: lessons = [] } = useQuery({
-    queryKey: ["lessons"],
+  // ✅ Total Users
+  const { data: totalUsers = 0, isLoading: loadingUsers } = useQuery({
+    queryKey: ["total-users"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/lessons");
+      const res = await axiosSecure.get("/admin/dashboard/total-users");
+      return res.data.totalUsers;
+    },
+  });
+
+  // ✅ Total Public Lessons
+  const { data: totalPublicLessons = 0, isLoading: loadingPublic } = useQuery({
+    queryKey: ["total-public-lessons"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        "/admin/dashboard/total-public-lessons"
+      );
+      return res.data.totalPublicLessons;
+    },
+  });
+
+  // ✅ Total Reported Lessons
+  const { data: totalReported = 0, isLoading: loadingReported } = useQuery({
+    queryKey: ["total-reported-lessons"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        "/admin/dashboard/total-reported-lessons"
+      );
+      return res.data.totalReported;
+    },
+  });
+
+  // ✅ Top Contributors
+  const { data: topContributors = [], isLoading: loadingContributors } =
+    useQuery({
+      queryKey: ["top-contributors"],
+      queryFn: async () => {
+        const res = await axiosSecure.get(
+          "/admin/dashboard/most-active-contributors"
+        );
+        return res.data;
+      },
+    });
+
+  // ✅ Today's Lessons
+  const { data: todaysLessons = 0, isLoading: loadingTodays } = useQuery({
+    queryKey: ["todays-lessons"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin/dashboard/todays-lessons");
+      return res.data.todaysLessons;
+    },
+  });
+
+  // ✅ Lesson Growth
+  const { data: lessonGrowth = [], isLoading: loadingLessonGrowth } = useQuery({
+    queryKey: ["lesson-growth"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin/dashboard/lesson-growth");
       return res.data;
     },
   });
 
-  console.log(lessons);
-  // --- Mock Data for Demonstration ---
-  const platformStats = {
-    totalUsers: "12,500",
-    totalPublicLessons: "3,840",
-    totalReportedLessons: "12",
-    newLessonsToday: "55",
-  };
+  // ✅ User Growth
+  const { data: userGrowth = [], isLoading: loadingUserGrowth } = useQuery({
+    queryKey: ["user-growth"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/admin/dashboard/user-growth");
+      return res.data;
+    },
+  });
 
-  const activeContributors = [
-    { name: "Alice Z.", lessons: 150, id: 1 },
-    { name: "Bob Y.", lessons: 122, id: 2 },
-    { name: "Charlie X.", lessons: 98, id: 3 },
-  ];
-  // -----------------------------------
+  // ✅ Show loading until all queries are ready
+  if (
+    loadingUsers ||
+    loadingPublic ||
+    loadingReported ||
+    loadingContributors ||
+    loadingTodays ||
+    loadingLessonGrowth ||
+    loadingUserGrowth
+  ) {
+    return <LoadingSpinner />;
+  }
 
   return (
-    <div className="space-y-10 p-4 md:p-8 bg-base-200 min-h-screen">
-      {/* Header */}
-      <header className="pb-4 border-b border-base-300">
-        <h1 className="text-4xl font-extrabold text-primary">
-          📊 Admin Panel Overview
-        </h1>
-        <p className="text-base-content/80 mt-1">
-          Monitor system activity and health at a glance.
-        </p>
-      </header>
+    <div className="p-6 space-y-6">
+      <h2 className="text-2xl font-bold mb-4">Admin Dashboard</h2>
 
-      {/* Section 1: Core Platform Metrics (Stats Grid) */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Total Users */}
-        <div className="card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body p-5">
-            <div className="flex justify-between items-center">
-              <h2 className="card-title text-2xl font-bold text-primary">
-                {platformStats.totalUsers}
-              </h2>
-              <FaUsers className="text-4xl text-primary/60" />
-            </div>
-            <p className="text-sm text-base-content/70">Total Users</p>
-            <div className="badge badge-success badge-outline">+5% week</div>
-          </div>
+      {/* Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="p-4 bg-blue-100 rounded text-center">
+          <p className="font-bold">Total Users</p>
+          <p className="text-2xl">{totalUsers}</p>
         </div>
-
-        {/* Total Public Lessons */}
-        <div className="card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body p-5">
-            <div className="flex justify-between items-center">
-              <h2 className="card-title text-2xl font-bold text-secondary">
-                {platformStats.totalPublicLessons}
-              </h2>
-              <FaGlobe className="text-4xl text-secondary/60" />
-            </div>
-            <p className="text-sm text-base-content/70">Total Public Lessons</p>
-            <div className="badge badge-info badge-outline">
-              {platformStats.newLessonsToday} New Today
-            </div>
-          </div>
+        <div className="p-4 bg-green-100 rounded text-center">
+          <p className="font-bold">Public Lessons</p>
+          <p className="text-2xl">{totalPublicLessons}</p>
         </div>
-
-        {/* Total Reported/Flagged Lessons */}
-        <div className="card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body p-5">
-            <div className="flex justify-between items-center">
-              <h2 className="card-title text-2xl font-bold text-error">
-                {platformStats.totalReportedLessons}
-              </h2>
-              <FaFlag className="text-4xl text-error/60" />
-            </div>
-            <p className="text-sm text-base-content/70">Flagged Lessons</p>
-            <div className="badge badge-error badge-outline">
-              Action Required
-            </div>
-          </div>
+        <div className="p-4 bg-red-100 rounded text-center">
+          <p className="font-bold">Reported Lessons</p>
+          <p className="text-2xl">{totalReported}</p>
         </div>
-
-        {/* Today's New Lessons (using a calculated metric) */}
-        <div className="card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body p-5">
-            <div className="flex justify-between items-center">
-              <h2 className="card-title text-2xl font-bold text-accent">
-                {platformStats.newLessonsToday}
-              </h2>
-              <FaPlusSquare className="text-4xl text-accent/60" />
-            </div>
-            <p className="text-sm text-base-content/70">Lessons Added Today</p>
-            <div className="badge badge-warning badge-outline">
-              Monitor Trend
-            </div>
-          </div>
+        <div className="p-4 bg-yellow-100 rounded text-center">
+          <p className="font-bold">Today's Lessons</p>
+          <p className="text-2xl">{todaysLessons}</p>
         </div>
-      </section>
+      </div>
 
-      {/* --- */}
+      {/* Most Active Contributors */}
+      <div className="p-4 bg-gray-100 rounded">
+        <h3 className="font-bold mb-2">Most Active Contributors</h3>
+        <ul className="list-disc pl-5">
+          {topContributors.map((c) => (
+            <li key={c._id}>
+              {c._id} — {c.lessonsCount} lessons
+            </li>
+          ))}
+        </ul>
+      </div>
 
-      {/* Section 2: Graphs and Activity (Dual Panel) */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* 2a: Growth Graphs (Takes 2/3 width) */}
-        <div className="lg:col-span-2 card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body">
-            <h2 className="card-title text-xl font-semibold flex items-center">
-              <FaChartLine className="mr-2 text-info" /> Platform Growth Trends
-            </h2>
+      {/* Lesson Growth Chart */}
+      <div className="p-4 bg-white rounded shadow">
+        <h3 className="font-bold mb-2">Lesson Growth (Last 7 Days)</h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart
+            data={lessonGrowth.map((l) => ({ date: l._id, count: l.count }))}
+          >
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <Line type="monotone" dataKey="count" stroke="#8884d8" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
 
-            <div className="mt-4 space-y-6">
-              {/* Lesson Growth Graph Placeholder */}
-              <div className="h-40 bg-base-200 rounded-lg flex items-center justify-center p-4">
-                <p className="text-base-content/60 italic">
-                  Graph Placeholder: Lesson Growth (Last 30 Days)
-                </p>
-              </div>
-
-              <div className="divider"></div>
-
-              {/* User Growth Graph Placeholder */}
-              <div className="h-40 bg-base-200 rounded-lg flex items-center justify-center p-4">
-                <p className="text-base-content/60 italic">
-                  Graph Placeholder: User Growth (Monthly)
-                </p>
-              </div>
-            </div>
-
-            <div className="card-actions justify-end mt-4">
-              <button className="btn btn-sm btn-ghost text-info">
-                View Detailed Reports
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* 2b: Most Active Contributors (Takes 1/3 width) */}
-        <div className="lg:col-span-1 card bg-base-100 shadow-xl border border-base-300">
-          <div className="card-body">
-            <h2 className="card-title text-xl font-semibold flex items-center">
-              <FaStar className="mr-2 text-warning" /> Top Contributors
-            </h2>
-
-            <ul className="menu bg-base-100 w-full p-2 rounded-box">
-              {activeContributors.map((user, index) => (
-                <li key={user.id} className="hover:bg-base-200 rounded-lg">
-                  <a
-                    href={`/admin/user/${user.id}`}
-                    className="flex justify-between items-center p-3"
-                  >
-                    <div className="font-medium">
-                      {index + 1}. {user.name}
-                    </div>
-                    <div className="badge badge-lg badge-ghost">
-                      {user.lessons} Lessons
-                    </div>
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            <div className="card-actions justify-end mt-4">
-              <button className="btn btn-sm btn-ghost">
-                View All Rankings
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* User Growth Chart */}
+      <div className="p-4 bg-white rounded shadow">
+        <h3 className="font-bold mb-2">User Growth (Last 7 Days)</h3>
+        <ResponsiveContainer width="100%" height={200}>
+          <LineChart
+            data={userGrowth.map((u) => ({ date: u._id, count: u.count }))}
+          >
+            <XAxis dataKey="date" />
+            <YAxis />
+            <Tooltip />
+            <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
+            <Line type="monotone" dataKey="count" stroke="#82ca9d" />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
-};
-
-export default DashboardHomeAdmin;
+}
