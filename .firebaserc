@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "digital-life-lessons-d2dce",
+    "prod": "digital-life-lessons-d2dce"
+  },
+  "targets": {},
+  "etags": {}
+}
