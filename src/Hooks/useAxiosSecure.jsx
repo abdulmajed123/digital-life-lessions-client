@@ -1,36 +1,42 @@
 import axios from "axios";
-// import React, { useEffect } from "react";
-// import useAuth from "./useAuth";
+import { useEffect } from "react";
+import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
   baseURL: "http://localhost:3000",
 });
 
 const useAxiosSecure = () => {
-  // const { user } = useAuth();
-  // useEffect(() => {
-  //   //intercepter request
-  //   const reqIntercepter = axiosSecure.interceptors.request.use((config) => {
-  //     config.headers.Authorization = `Bearer ${user?.accessToken}`;
-  //     return config;
-  //   });
+  const { user } = useAuth();
+  useEffect(() => {
+    // Attach token to every request if user logged in
+    const reqInterceptor = axiosSecure.interceptors.request.use(
+      async (config) => {
+        if (user?.accessToken) {
+          config.headers.Authorization = `Bearer ${user.accessToken}`;
+        }
+        return config;
+      },
+      (error) => Promise.reject(error)
+    );
 
-  //   // interceptors response
+    // Response interceptor for global error handling
+    const resInterceptor = axiosSecure.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          console.log("Unauthorized! Token may have expired.");
+        }
+        return Promise.reject(error);
+      }
+    );
 
-  //   const resInterceptors = axiosSecure.interceptors.response.use(
-  //     (response) => {
-  //       return response;
-  //     },
-  //     (error) => {
-  //       console.log(error);
-  //       return Promise.reject(error);
-  //     }
-  //   );
-  //   return () => {
-  //     axiosSecure.interceptors.request.eject(reqIntercepter);
-  //     axiosSecure.interceptors.response.eject(resInterceptors);
-  //   };
-  // }, [user]);
+    return () => {
+      axiosSecure.interceptors.request.eject(reqInterceptor);
+      axiosSecure.interceptors.response.eject(resInterceptor);
+    };
+  }, [user]);
+
   return axiosSecure;
 };
 

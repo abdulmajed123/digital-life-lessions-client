@@ -13,129 +13,126 @@ import {
 import { Link, Outlet } from "react-router";
 import useRole from "../Hooks/useRole";
 import image from "../assets/image.png";
+import useAuth from "../Hooks/useAuth";
 
 const DashboardLayout = () => {
   const { role } = useRole();
+  const { user } = useAuth();
 
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content">
+
+      {/* Main Content */}
+      <div className="drawer-content flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Navbar */}
-        <nav className="navbar w-full bg-base-300">
+        <nav className="flex items-center justify-between px-6 py-3 bg-white dark:bg-gray-800 shadow-md sticky top-0 z-20">
           <label
             htmlFor="my-drawer-4"
             aria-label="open sidebar"
-            className="btn btn-square btn-ghost"
+            className="btn btn-square btn-ghost lg:hidden"
           >
-            {/* Sidebar toggle icon */}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              strokeLinejoin="round"
-              strokeLinecap="round"
               strokeWidth="2"
-              fill="none"
               stroke="currentColor"
-              className="my-1.5 inline-block size-4"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-6 h-6 text-gray-800 dark:text-gray-200"
             >
-              <path d="M4 4m0 2a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2z"></path>
-              <path d="M9 4v16"></path>
-              <path d="M14 10l2 2l-2 2"></path>
+              <path d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </label>
-          <div className="px-4">Digital Life Lessons</div>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            Digital Life Lessons
+          </h1>
         </nav>
-        <Outlet></Outlet>
-        {/* Page content here */}
+
+        {/* Page Content */}
+        <main className="flex-1 p-6">
+          <Outlet />
+        </main>
       </div>
 
-      <div className="drawer-side is-drawer-close:overflow-visible">
-        <label
-          htmlFor="my-drawer-4"
-          aria-label="close sidebar"
-          className="drawer-overlay"
-        ></label>
-        <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
-          {/* Sidebar content here */}
-          <ul className="menu w-full grow">
-            {/* List item */}
-            <li>
-              <Link to="/">
-                <img src={image} className="w-16 h-10" alt="" />
-              </Link>
-            </li>
+      {/* Sidebar */}
+      <div className="drawer-side">
+        <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
+        <aside className="flex flex-col w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 min-h-screen">
+          {/* Logo */}
+          <div className="flex items-center justify-center py-6 border-b border-gray-200 dark:border-gray-700">
+            <Link to="/" className="flex items-center gap-2">
+              <img src={image} className="w-10 h-auto" alt="Logo" />
+              <span className="text-xl font-bold text-gray-800 dark:text-gray-100">
+                Life Lessons
+              </span>
+            </Link>
+          </div>
 
+          {/* Menu Items */}
+          <ul className="menu grow p-4 space-y-2">
             <li>
               <Link
                 to="/dashboard"
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Home Page"
+                className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
               >
-                {/* Home icon */}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  strokeLinejoin="round"
-                  strokeLinecap="round"
                   strokeWidth="2"
-                  fill="none"
                   stroke="currentColor"
-                  className="my-1.5 inline-block size-4"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-6 h-6 text-gray-800 dark:text-gray-200"
                 >
-                  <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
-                  <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <path d="M3 10l9-7 9 7v11a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-4H5a2 2 0 0 1-2-2z" />
                 </svg>
-                <span className="is-drawer-close:hidden">Home Page</span>
+                <span>Dashboard</span>
               </Link>
             </li>
+
             {role === "user" && (
               <>
                 <li>
                   <Link
                     to="/dashboard/add-lesson"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Add Lesson"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-
-                    <MdAddCircleOutline size={22} />
-                    <span className="is-drawer-close:hidden">Add Lesson</span>
+                    <MdAddCircleOutline size={24} />
+                    <span>Add Lesson</span>
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/dashboard/my-lessons"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="My Lessons"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-                    <MdLibraryBooks size={22} />
-                    <span className="is-drawer-close:hidden">My Lessons</span>
+                    <MdLibraryBooks size={24} />
+                    <span>My Lessons</span>
                   </Link>
                 </li>
-
                 <li>
                   <Link
                     to="/dashboard/my-favorite"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="My Favorite"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-                    <MdFavoriteBorder size={22} />
-                    <span className="is-drawer-close:hidden">My Favorite</span>
+                    <MdFavoriteBorder size={24} />
+                    <span>My Favorite</span>
                   </Link>
                 </li>
-
                 <li>
                   <Link
-                    to="/dashboard/profile"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Profile"
+                    to="/profile"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-                    <FaUserCircle size={22} />
-                    <span className="is-drawer-close:hidden">Profile</span>
+                    <img
+                      src={user?.photoURL}
+                      className="rounded-full w-8 h-8"
+                      alt=""
+                    />
+                    <span>Profile</span>
                   </Link>
                 </li>
               </>
@@ -146,191 +143,46 @@ const DashboardLayout = () => {
                 <li>
                   <Link
                     to="/dashboard/manage-user"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Manage User"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-                    <FaUsers size={22} />
-                    <span className="is-drawer-close:hidden">Manage User</span>
+                    <FaUsers size={24} />
+                    <span>Manage User</span>
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/dashboard/manage-lesson"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Manage Lessons"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-                    <FaBook size={22} />
-                    <span className="is-drawer-close:hidden">
-                      Manage Lessons
-                    </span>
+                    <FaBook size={24} />
+                    <span>Manage Lessons</span>
                   </Link>
                 </li>
-
                 <li>
                   <Link
                     to="/dashboard/reported-lessons"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Reported Lessons"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-                    <FaExclamationTriangle size={22} />
-                    <span className="is-drawer-close:hidden">
-                      Reported Lessons
-                    </span>
+                    <FaExclamationTriangle size={24} />
+                    <span>Reported Lessons</span>
                   </Link>
                 </li>
                 <li>
                   <Link
                     to="/dashboard/admin-profile"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="Admin Profile"
+                    className="flex items-center gap-4 px-3 py-3 rounded-lg hover:bg-indigo-50 dark:hover:bg-gray-700 transition text-lg text-gray-800 dark:text-gray-200"
                   >
-                    {/* Home icon */}
-                    <FaUserCircle size={22} />
-                    <span className="is-drawer-close:hidden">
-                      Admin Profile
-                    </span>
+                    <FaUserCircle size={24} />
+                    <span>Admin Profile</span>
                   </Link>
                 </li>
               </>
             )}
           </ul>
-        </div>
+        </aside>
       </div>
     </div>
   );
 };
 
 export default DashboardLayout;
-// import React from "react";
-// import { FaUserCircle } from "react-icons/fa";
-// import {
-//   MdAddCircleOutline,
-//   MdFavoriteBorder,
-//   MdLibraryBooks,
-// } from "react-icons/md";
-// import { Link, Outlet, useLocation } from "react-router";
-
-// const DashboardLayout = () => {
-//   const { pathname } = useLocation();
-
-//   const menuItems = [
-//     { name: "Home Page", path: "/", icon: "home" },
-//     {
-//       name: "Add Lesson",
-//       path: "/dashboard/add-lesson",
-//       icon: <MdAddCircleOutline size={22} />,
-//     },
-//     {
-//       name: "My Lessons",
-//       path: "/dashboard/my-lessons",
-//       icon: <MdLibraryBooks size={22} />,
-//     },
-//     {
-//       name: "My Favorite",
-//       path: "/dashboard/my-favorite",
-//       icon: <MdFavoriteBorder size={22} />,
-//     },
-//     {
-//       name: "Profile",
-//       path: "/dashboard/profile",
-//       icon: <FaUserCircle size={22} />,
-//     },
-//   ];
-
-//   return (
-//     <div className="drawer lg:drawer-open bg-base-200">
-//       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
-
-//       {/* MAIN CONTENT */}
-//       <div className="drawer-content flex flex-col">
-//         {/* Top Navbar */}
-//         <nav className="navbar bg-base-300 border-b border-base-300 shadow-sm">
-//           <label
-//             htmlFor="my-drawer-4"
-//             className="btn btn-ghost btn-square drawer-button lg:hidden"
-//           >
-//             {/* Sidebar toggle icon */}
-//             <svg
-//               xmlns="http://www.w3.org/2000/svg"
-//               className="w-5 h-5"
-//               fill="none"
-//               viewBox="0 0 24 24"
-//               strokeWidth="2"
-//               stroke="currentColor"
-//             >
-//               <path
-//                 strokeLinecap="round"
-//                 strokeLinejoin="round"
-//                 d="M4 6h16M4 12h16M4 18h16"
-//               />
-//             </svg>
-//           </label>
-
-//           <div className="flex-1 font-semibold text-lg">
-//             Digital Life Lessons
-//           </div>
-//         </nav>
-
-//         {/* Page Content */}
-//         <div className="p-4">
-//           <Outlet />
-//         </div>
-//       </div>
-
-//       {/* SIDEBAR */}
-//       <div className="drawer-side">
-//         <label htmlFor="my-drawer-4" className="drawer-overlay"></label>
-
-//         <aside className="w-64 bg-base-100 border-r border-base-300 shadow-sm">
-//           <div className="p-4 font-bold text-xl">Dashboard</div>
-
-//           <ul className="menu px-4">
-//             {menuItems.map((item, index) => (
-//               <li key={index}>
-//                 <Link
-//                   to={item.path}
-//                   className={`flex items-center gap-3 py-3 rounded-lg transition-all
-//                     ${
-//                       pathname === item.path
-//                         ? "bg-primary text-white shadow-md"
-//                         : "hover:bg-base-200"
-//                     }
-//                   `}
-//                 >
-//                   <span className="text-xl">{item.icon}</span>
-//                   <span>{item.name}</span>
-//                 </Link>
-//               </li>
-//             ))}
-
-//             {/* Settings */}
-//             <li className="mt-3">
-//               <button className="flex items-center gap-3 py-3 hover:bg-base-200 rounded-lg">
-//                 <svg
-//                   xmlns="http://www.w3.org/2000/svg"
-//                   className="w-5 h-5"
-//                   fill="none"
-//                   viewBox="0 0 24 24"
-//                   strokeWidth="2"
-//                   stroke="currentColor"
-//                 >
-//                   <path
-//                     strokeLinecap="round"
-//                     strokeLinejoin="round"
-//                     d="M10 6h10M4 6h.01M10 12h10M4 12h.01M10 18h10M4 18h.01"
-//                   />
-//                 </svg>
-//                 <span>Settings</span>
-//               </button>
-//             </li>
-//           </ul>
-//         </aside>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default DashboardLayout;

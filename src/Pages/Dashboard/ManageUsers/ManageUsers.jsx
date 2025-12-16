@@ -1,141 +1,3 @@
-// import React from "react";
-// import useAxiosSecure from "../../../Hooks/useAxiosSecure";
-// import { useQuery } from "@tanstack/react-query";
-// import LoadingSpinner from "../../../Component/LoadingSpenner/LoadingSpenner";
-// import useAuth from "../../../Hooks/useAuth";
-// import Swal from "sweetalert2";
-
-// export default function ManageUsers() {
-//   const { user } = useAuth();
-//   const axiosSecure = useAxiosSecure();
-
-//   const {
-//     data: users = [],
-//     isPending,
-//     refetch,
-//   } = useQuery({
-//     queryKey: ["users"],
-//     queryFn: async () => {
-//       const res = await axiosSecure.get("/users");
-//       return res.data;
-//     },
-//   });
-
-//   const { data: userLessons = [] } = useQuery({
-//     queryKey: ["my-lessons", user?.email],
-//     queryFn: async () => {
-//       const res = await axiosSecure.get(
-//         `/users/create-lessons?email=${user?.email}`
-//       );
-//       return res.data;
-//     },
-//   });
-
-//   const handleMakeAdmin = (user) => {
-//     const roleInfo = {
-//       role: "admin",
-//     };
-//     axiosSecure.patch(`/users/${user._id}`, roleInfo).then((res) => {
-//       if (res.data.modifiedCount) {
-//         console.log(res.data);
-//         refetch();
-//         Swal.fire({
-//           position: "top-end",
-//           icon: "success",
-//           title: `${user.displayName} marekd as an Admin`,
-//           showConfirmButton: false,
-//           timer: 1500,
-//         });
-//       }
-//     });
-//   };
-
-//   const handleRemoveAdmin = (user) => {
-//     const roleInfo = {
-//       role: "user",
-//     };
-//     axiosSecure.patch(`/users/${user._id}`, roleInfo).then((res) => {
-//       if (res.data.modifiedCount) {
-//         console.log(res.data);
-//         refetch();
-//         Swal.fire({
-//           position: "top-end",
-//           icon: "success",
-//           title: `${user.displayName} removed from Admin`,
-//           showConfirmButton: false,
-//           timer: 1500,
-//         });
-//       }
-//     });
-//   };
-
-//   if (isPending) return <LoadingSpinner></LoadingSpinner>;
-//   return (
-//     <div className="p-6">
-//       <h2 className="text-2xl font-bold mb-6">👥 Manage Users</h2>
-
-//       <div className="overflow-x-auto shadow rounded-lg bg-white">
-//         <table className="min-w-full text-left">
-//           <thead className="bg-gray-100">
-//             <tr>
-//               <th className="p-3">Name</th>
-//               <th className="p-3">Email</th>
-//               <th className="p-3">Role</th>
-//               <th className="p-3">Lessons Created</th>
-//               <th className="p-3 text-end">Actions</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {users.map((user) => (
-//               <tr key={user._id} className="border-b hover:bg-gray-50">
-//                 <td className="p-3 font-medium">{user.displayName}</td>
-//                 <td className="p-3">{user.email}</td>
-//                 <td className="p-3">{user.role}</td>
-//                 <td className="p-3">{userLessons.length}</td>
-//                 <td className="p-3 flex gap-2 justify-end">
-//                   {user.role === "admin" && (
-//                     <button
-//                       onClick={() => handleRemoveAdmin(user)}
-//                       className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-//                     >
-//                       Remove
-//                     </button>
-//                   )}
-
-//                   <button
-//                     onClick={() => handleMakeAdmin(user)}
-//                     className="px-3 py-1 bg-red-500 text-white rounded "
-//                   >
-//                     Promote
-//                   </button>
-//                   {/* {user.role === "Admin" ? (
-//                     <button
-//                       onClick={() => handleMakeAdmin(user)}
-//                       className="px-3 py-1 bg-red-500 text-white rounded "
-//                     >
-//                       Removed
-//                     </button>
-//                   ) : (
-//                     <button
-//                       onClick={() => handleRemoveAdmin(user)}
-//                       className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-//                     >
-//                       Promote
-//                     </button>
-//                   )} */}
-//                   <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600">
-//                     Delete
-//                   </button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       </div>
-//     </div>
-//   );
-// }
-
 import React, { useEffect, useState } from "react";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
@@ -159,10 +21,10 @@ export default function ManageUsers() {
     },
   });
 
-  // 🔥 All users lesson count state
+  //  All users lesson count state
   const [lessonCounts, setLessonCounts] = useState({});
 
-  // 🔥 Load total lessons created for each user
+  //  Load total lessons created for each user
   useEffect(() => {
     const loadCounts = async () => {
       let counts = {};
@@ -232,15 +94,15 @@ export default function ManageUsers() {
     });
   };
 
-  if (isPending) return <LoadingSpinner></LoadingSpinner>;
+  if (isPending) return <LoadingSpinner />;
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
       <h2 className="text-2xl font-bold mb-6">👥 Manage Users</h2>
 
-      <div className="overflow-x-auto shadow rounded-lg bg-white">
+      <div className="overflow-x-auto shadow rounded-lg bg-white dark:bg-gray-800">
         <table className="min-w-full text-left">
-          <thead className="bg-gray-100">
+          <thead className="bg-gray-100 dark:bg-gray-700">
             <tr>
               <th className="p-3">Name</th>
               <th className="p-3">Email</th>
@@ -252,7 +114,10 @@ export default function ManageUsers() {
 
           <tbody>
             {users.map((user) => (
-              <tr key={user._id} className="border-b hover:bg-gray-50">
+              <tr
+                key={user._id}
+                className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+              >
                 <td className="p-3 font-medium">{user.displayName}</td>
                 <td className="p-3">{user.email}</td>
                 <td className="p-3 capitalize">{user.role}</td>

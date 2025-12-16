@@ -22,6 +22,8 @@ import ErrorPage from "../Component/ErrorPage/ErrorPage";
 import PaymentCancel from "../Pages/Dashboard/Payment/PaymentCancel/PaymentCancel";
 import DashboardHome from "../Pages/Dashboard/DashboardHome/DashboardHome";
 import AdminProfile from "../Pages/Dashboard/Profile/AdminProfile";
+import AdminRoute from "./AdminRoute";
+import Forbidden from "../Component/Forbidden/Forbidden";
 
 const router = createBrowserRouter([
   {
@@ -50,6 +52,10 @@ const router = createBrowserRouter([
         element: <PublicLessons></PublicLessons>,
       },
       {
+        path: "profile",
+        element: <Profile></Profile>,
+      },
+      {
         path: "/lesson/:id",
         element: (
           <PrivateRoutes>
@@ -74,7 +80,11 @@ const router = createBrowserRouter([
       },
       {
         path: "admin-profile",
-        element: <AdminProfile></AdminProfile>,
+        element: (
+          <AdminRoute>
+            <AdminProfile></AdminProfile>
+          </AdminRoute>
+        ),
       },
       {
         path: "payment-success",
@@ -102,19 +112,32 @@ const router = createBrowserRouter([
       },
       {
         path: "manage-user",
-        element: <ManageUsers></ManageUsers>,
+        element: (
+          <AdminRoute>
+            {" "}
+            <ManageUsers></ManageUsers>
+          </AdminRoute>
+        ),
       },
       {
         path: "manage-lesson",
-        element: <ManageLessons></ManageLessons>,
+        element: (
+          <AdminRoute>
+            <ManageLessons></ManageLessons>
+          </AdminRoute>
+        ),
       },
       {
         path: "reported-lessons",
-        element: <ReportedLessons></ReportedLessons>,
+        element: (
+          <AdminRoute>
+            <ReportedLessons></ReportedLessons>
+          </AdminRoute>
+        ),
       },
       {
-        path: "profile",
-        element: <Profile></Profile>,
+        path: "forbidden",
+        element: <Forbidden></Forbidden>,
       },
     ],
   },

@@ -1,176 +1,118 @@
-// src/pages/AdminProfile.jsx
-import React, { useState } from "react";
-import {
-  FaUserShield,
-  FaEdit,
-  FaCheckCircle,
-  FaTimesCircle,
-  FaTasks,
-} from "react-icons/fa";
+import { useForm } from "react-hook-form";
 import useAuth from "../../../Hooks/useAuth";
+import useAxiosSecure from "../../../Hooks/useAxiosSecure";
+import { imageUpload } from "../../../Utils/index.js";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 const AdminProfile = () => {
-  const { user } = useAuth();
-  // --- Mock Data ---
-  const initialProfile = {
-    name: "Alex Johnson",
-    email: "alex.johnson@platform.com",
-    role: "Super Administrator",
-    photoUrl: "https://i.pravatar.cc/150?img=68", // Placeholder image
-    lessonsModerated: 450,
-    actionsTaken: 89,
-  };
-  // -----------------
+  const { user, updateUserProfile } = useAuth();
+  const axiosSecure = useAxiosSecure();
+  const [loading, setLoading] = useState(false);
 
-  const [profile, setProfile] = useState(initialProfile);
-  const [newName, setNewName] = useState(initialProfile.name);
-  const [isEditingName, setIsEditingName] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
-  const handleNameUpdate = (e) => {
-    e.preventDefault();
-    // In a real app, you would send this to an API
-    setProfile({ ...profile, name: newName });
-    setIsEditingName(false);
-    console.log(`Updated name to: ${newName}`);
-  };
+  const onSubmit = async (data) => {
+    try {
+      setLoading(true);
 
-  const handlePhotoUpload = (e) => {
-    // Simple file upload logic placeholder
-    const file = e.target.files[0];
-    if (file) {
-      const newPhotoUrl = URL.createObjectURL(file);
-      setProfile({ ...profile, photoUrl: newPhotoUrl });
-      console.log(`Updated photo URL: ${newPhotoUrl}`);
+      // 1️⃣ Upload image to imgbb
+      const imageUrl = await imageUpload(data.photo[0]);
+
+      // 2️⃣ Update Firebase Auth
+      await updateUserProfile(data.displayName, imageUrl);
+
+      // 3️⃣ Update MongoDB
+      await axiosSecure.patch("/users/update-profile", {
+        email: user.email,
+        displayName: data.displayName,
+        photoURL: imageUrl,
+      });
+
+      toast.success("Profile updated successfully");
+      window.location.reload();
+    } catch (error) {
+      console.log("ERROR:", error);
+      toast.error("Profile update failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-8">
-      <h1 className="text-3xl font-bold text-primary">
-        ⚙️ Admin Profile Settings
-      </h1>
-      <p className="text-base-content/70">
-        Manage your profile details and administrative summary.
-      </p>
+    <div className="max-w-5xl mx-auto p-6 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+      <h2 className="text-2xl font-bold mb-6">Admin Profile</h2>
 
-      {/* Profile Card Container */}
-      <div className="card bg-base-100 shadow-xl border border-base-300">
-        <div className="card-body">
-          {/* Profile Header (Photo, Name, Role) */}
-          <div className="flex flex-col md:flex-row items-start md:items-center space-y-4 md:space-y-0 md:space-x-6 pb-6 border-b border-base-200">
-            {/* Photo Upload/Display */}
-            <div className="avatar indicator">
-              {/* Hidden file input triggered by button/photo click */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* LEFT */}
+        <div className="bg-white dark:bg-gray-800 shadow rounded-2xl p-6 text-center">
+          <img
+            src={user?.photoURL}
+            className="w-28 h-28 rounded-full mx-auto border border-gray-300 dark:border-gray-600"
+          />
+          <h3 className="text-xl font-semibold mt-3">{user?.displayName}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {user?.email}
+          </p>
+
+          <span className="inline-block mt-3 px-4 py-1 rounded-full bg-red-100 dark:bg-red-600 text-red-600 dark:text-red-100 font-semibold">
+            Admin
+          </span>
+        </div>
+
+        {/* RIGHT */}
+        <div className="md:col-span-2 bg-white dark:bg-gray-800 shadow rounded-2xl p-6">
+          <h3 className="text-lg font-semibold mb-4">Update Profile</h3>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div>
+              <label className="text-sm font-medium">Display Name</label>
+              <input
+                defaultValue={user?.displayName}
+                {...register("displayName", { required: true })}
+                className="input input-bordered w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
+              />
+              {errors.displayName && (
+                <p className="text-red-500 text-sm">Name is required</p>
+              )}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Profile Photo</label>
               <input
                 type="file"
-                id="photo-upload"
                 accept="image/*"
-                onChange={handlePhotoUpload}
-                className="hidden"
+                {...register("photo", { required: true })}
+                className="file-input file-input-bordered w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-600"
               />
-              <div
-                className="w-28 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 cursor-pointer"
-                onClick={() => document.getElementById("photo-upload").click()}
-              >
-                <img src={user.photoURL} alt={`${profile.name}'s profile`} />
-              </div>
-              <span
-                className="indicator-item badge badge-sm badge-info cursor-pointer"
-                onClick={() => document.getElementById("photo-upload").click()}
-                title="Change Photo"
-              >
-                <FaEdit className="w-3 h-3" />
-              </span>
             </div>
 
-            {/* Name, Email, Role */}
-            <div>
-              {/* Name and Edit Button */}
-              <div className="flex items-center space-x-2">
-                {isEditingName ? (
-                  <form onSubmit={handleNameUpdate} className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      className="input input-bordered input-sm w-full max-w-xs"
-                      required
-                    />
-                    <button type="submit" className="btn btn-success btn-sm">
-                      <FaCheckCircle />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setIsEditingName(false)}
-                      className="btn btn-error btn-sm"
-                    >
-                      <FaTimesCircle />
-                    </button>
-                  </form>
-                ) : (
-                  <>
-                    <h2 className="text-2xl font-bold">{user.displayName}</h2>
-                    <button
-                      onClick={() => setIsEditingName(true)}
-                      className="btn btn-ghost btn-sm text-primary"
-                    >
-                      <FaEdit className="w-4 h-4" />
-                    </button>
-                  </>
-                )}
-              </div>
+            <button disabled={loading} className="btn btn-primary w-full">
+              {loading ? "Updating..." : "Update Profile"}
+            </button>
+          </form>
+        </div>
+      </div>
 
-              <p className="text-base-content/80 mt-1">{user.email}</p>
-
-              {/* Admin Role Badge */}
-              <div className="badge badge-lg badge-secondary mt-3 flex items-center space-x-1">
-                <FaUserShield />
-                <span>{profile.role}</span>
-              </div>
-            </div>
+      {/* Activity Summary */}
+      <div className="mt-8 bg-white dark:bg-gray-800 shadow rounded-2xl p-6">
+        <h3 className="text-lg font-semibold mb-4">Activity Summary</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
+            <p className="text-2xl font-bold">12</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300">
+              Lessons Moderated
+            </p>
           </div>
-
-          {/* Activity Summary (Optional but included for completeness) */}
-          <div className="mt-6">
-            <h3 className="text-xl font-semibold mb-3 flex items-center text-accent">
-              <FaTasks className="mr-2" /> Administrative Summary
-            </h3>
-            <div className="stats shadow w-full">
-              <div className="stat bg-base-200">
-                <div className="stat-title">Lessons Moderated</div>
-                <div className="stat-value text-accent">
-                  {profile.lessonsModerated}
-                </div>
-                <div className="stat-desc">Total reviews completed</div>
-              </div>
-
-              <div className="stat bg-base-200">
-                <div className="stat-title">System Actions Taken</div>
-                <div className="stat-value text-warning">
-                  {profile.actionsTaken}
-                </div>
-                <div className="stat-desc">
-                  Flags resolved, accounts managed
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* General Settings Placeholder */}
-          <div className="mt-8 pt-4 border-t border-base-200">
-            <h3 className="text-xl font-semibold mb-4">General Preferences</h3>
-            <div className="form-control">
-              <label className="label cursor-pointer justify-start space-x-4">
-                <input
-                  type="checkbox"
-                  defaultChecked
-                  className="toggle toggle-primary"
-                />
-                <span className="label-text">
-                  Receive critical system alerts via email
-                </span>
-              </label>
-            </div>
+          <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-xl text-center">
+            <p className="text-2xl font-bold">5</p>
+            <p className="text-sm text-gray-500 dark:text-gray-300">
+              Actions Taken
+            </p>
           </div>
         </div>
       </div>

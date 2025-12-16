@@ -9,6 +9,7 @@ export default function HeroSlider() {
         "Learn practical life lessons that improve mindset, productivity, discipline, and long-term success.",
       cta: "Explore Lessons",
       note: "Daily Growth Insights",
+      gradient: "from-indigo-500 via-blue-500 to-sky-500",
     },
     {
       id: 2,
@@ -17,14 +18,16 @@ export default function HeroSlider() {
         "Premium users get unlimited lessons, priority listing, ad-free learning, and exclusive weekly deep-dive content.",
       cta: "Upgrade to Premium",
       note: "Premium Benefits",
+      gradient: "from-green-400 via-teal-400 to-cyan-500",
     },
     {
       id: 3,
       title: "Build Better Habits, Achieve Big Goals",
       subtitle:
-        "Our Digital Life Lesson project helps you track habits, set goals, and transform your mindset with science-backed methods.",
+        "Track habits, set goals, and transform your mindset with science-backed methods.",
       cta: "Start Your Journey",
       note: "Habit & Mindset Tools",
+      gradient: "from-pink-500 via-rose-500 to-orange-400",
     },
   ];
 
@@ -32,52 +35,39 @@ export default function HeroSlider() {
   const timeoutRef = useRef(null);
   const AUTO_PLAY_MS = 6000;
 
-  // Auto-play
   useEffect(() => {
     resetTimeout();
     timeoutRef.current = setTimeout(() => {
       setIndex((prev) => (prev + 1) % slides.length);
     }, AUTO_PLAY_MS);
-    return () => {
-      resetTimeout();
-    };
+    return () => resetTimeout();
   }, [index]);
 
-  function resetTimeout() {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-    }
-  }
+  const resetTimeout = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+  };
 
-  function goTo(i) {
-    setIndex(i % slides.length);
-  }
-
-  function prev() {
+  const goTo = (i) => setIndex(i % slides.length);
+  const prev = () =>
     setIndex((prevIndex) => (prevIndex - 1 + slides.length) % slides.length);
-  }
+  const next = () => setIndex((prevIndex) => (prevIndex + 1) % slides.length);
 
-  function next() {
-    setIndex((prevIndex) => (prevIndex + 1) % slides.length);
-  }
-
-  // keyboard navigation
   useEffect(() => {
-    function onKey(e) {
+    const handleKey = (e) => {
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    };
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
   return (
-    <section className="relative w-full overflow-hidden rounded-2xl shadow-lg">
-      {/* Slides container */}
-      <div className="relative h-80 sm:h-96 lg:h-[520px]">
-        {slides.map((s, i) => (
+    <section className="relative w-full overflow-hidden rounded-3xl shadow-xl">
+      {/* Slides */}
+      <div className="relative h-96 sm:h-[28rem] lg:h-[32rem]">
+        {slides.map((slide, i) => (
           <div
-            key={s.id}
+            key={slide.id}
             aria-hidden={i !== index}
             className={`absolute inset-0 flex items-center justify-center transition-transform duration-700 ease-in-out transform
               ${
@@ -87,39 +77,33 @@ export default function HeroSlider() {
                   ? "-translate-x-full z-10"
                   : "translate-x-full z-10"
               }`}
-            style={{
-              backgroundImage:
-                i === 0
-                  ? "linear-gradient(135deg, rgba(99,102,241,0.9), rgba(59,130,246,0.85))"
-                  : i === 1
-                  ? "linear-gradient(135deg, rgba(16,185,129,0.9), rgba(6,182,212,0.85))"
-                  : "linear-gradient(135deg, rgba(236,72,153,0.9), rgba(249,115,22,0.85))",
-              backgroundBlendMode: "overlay",
-            }}
           >
-            <div className="container mx-auto px-6 sm:px-10 lg:px-20">
+            <div
+              className={`absolute inset-0 bg-gradient-to-r ${slide.gradient} opacity-95`}
+            ></div>
+
+            <div className="container mx-auto px-6 sm:px-10 lg:px-20 z-10">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-                {/* Text column */}
-                <div className="text-white max-w-2xl">
-                  <p className="inline-block px-3 py-1 rounded-full bg-white/10 text-sm mb-4">
-                    {s.note}
+                {/* Text */}
+                <div className="text-white max-w-xl lg:max-w-2xl">
+                  <p className="inline-block px-3 py-1 rounded-full bg-white/20 text-sm mb-4 font-medium">
+                    {slide.note}
                   </p>
-                  <h2 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold leading-tight mb-4">
-                    {s.title}
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold mb-4 leading-snug">
+                    {slide.title}
                   </h2>
                   <p className="text-base sm:text-lg mb-6 opacity-90">
-                    {s.subtitle}
+                    {slide.subtitle}
                   </p>
-                  <div className="flex gap-3">
+                  <div className="flex flex-wrap gap-4">
                     <a
                       href="#"
-                      className="inline-flex items-center gap-2 bg-white text-slate-900 font-medium px-4 py-2 rounded-2xl shadow hover:scale-[1.01] transition-transform"
-                      role="button"
+                      className="inline-flex items-center gap-2 bg-white text-slate-900 font-semibold px-5 py-3 rounded-2xl shadow-lg hover:scale-[1.03] transition-transform"
                     >
-                      {s.cta}
+                      {slide.cta}
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
+                        className="h-5 w-5"
                         viewBox="0 0 20 20"
                         fill="currentColor"
                       >
@@ -130,25 +114,23 @@ export default function HeroSlider() {
                         />
                       </svg>
                     </a>
-
                     <a
                       href="#"
-                      className="inline-flex items-center gap-2 border border-white/30 text-white px-4 py-2 rounded-2xl hover:bg-white/10"
+                      className="inline-flex items-center gap-2 border border-white/40 text-white px-5 py-3 rounded-2xl hover:bg-white/10 transition"
                     >
                       Learn more
                     </a>
                   </div>
                 </div>
 
-                {/* Decorative column - simple illustration */}
+                {/* Decorative Box */}
                 <div className="hidden lg:flex justify-center">
-                  <div className="w-full max-w-md p-4 bg-white/10 rounded-2xl backdrop-blur-sm">
-                    <div className="h-48 flex items-center justify-center text-white text-lg font-semibold">
-                      {/* Placeholder graphic - replace with image if you like */}
-                      {s.title}
+                  <div className="w-full max-w-md p-4 bg-white/10 rounded-3xl backdrop-blur-md shadow-lg">
+                    <div className="h-48 flex items-center justify-center text-white text-lg font-semibold text-center px-4">
+                      {slide.title}
                     </div>
                     <div className="mt-4 text-sm text-white/90">
-                      Quick summary: {s.subtitle}
+                      {slide.subtitle}
                     </div>
                   </div>
                 </div>
@@ -158,15 +140,15 @@ export default function HeroSlider() {
         ))}
       </div>
 
-      {/* Prev / Next controls */}
+      {/* Navigation */}
       <button
         onClick={prev}
         aria-label="Previous slide"
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-white/10 hover:bg-white/20 focus:outline-none"
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/20 hover:bg-white/30 focus:outline-none shadow-lg"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-white"
+          className="h-7 w-7 text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -183,11 +165,11 @@ export default function HeroSlider() {
       <button
         onClick={next}
         aria-label="Next slide"
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-2 rounded-full bg-white/10 hover:bg-white/20 focus:outline-none"
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 p-3 rounded-full bg-white/20 hover:bg-white/30 focus:outline-none shadow-lg"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-white"
+          className="h-7 w-7 text-white"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -207,7 +189,6 @@ export default function HeroSlider() {
           <button
             key={i}
             onClick={() => goTo(i)}
-            aria-label={`Go to slide ${i + 1}`}
             className={`w-10 h-2 rounded-full transition-all ${
               i === index ? "bg-white scale-100" : "bg-white/40 scale-90"
             }`}

@@ -1,224 +1,3 @@
-// import React from "react";
-// import {
-//   FaBook,
-//   FaStar,
-//   FaPlusCircle,
-//   FaHeart,
-//   FaCog,
-//   FaQuestionCircle,
-// } from "react-icons/fa";
-// import { Link } from "react-router"; // Use Link for internal navigation
-// import useAuth from "../../../Hooks/useAuth";
-// import useAxiosSecure from "../../../Hooks/useAxiosSecure";
-// import { useQuery } from "@tanstack/react-query";
-// import LoadingSpinner from "../../../Component/LoadingSpenner/LoadingSpenner";
-
-// const UserDashboardHome = () => {
-//   const { user } = useAuth();
-//   const axiosSecure = useAxiosSecure();
-
-//   const { data: myLessons = {} } = useQuery({
-//     queryKey: ["my-lessons", user?.email],
-//     queryFn: async () => {
-//       const res = await axiosSecure.get(`/my-lessons/${user.email}`);
-//       return res.data;
-//     },
-//     enabled: !!user?.email,
-//   });
-
-//   const { data: favorites = [], isLoading } = useQuery({
-//     queryKey: ["favorites", user?.email],
-//     queryFn: async () => {
-//       const res = await axiosSecure.get(`/favorites/${user.email}`);
-//       return res.data;
-//     },
-//     enabled: !!user?.email,
-//   });
-
-//   if (isLoading) return <LoadingSpinner></LoadingSpinner>;
-//   return (
-//     <div className="space-y-8 p-4">
-//       {/* 1. Welcome Header - Now handled in the Layout for consistency, but added here for context */}
-//       <div className="pb-4">
-//         <h1 className="text-3xl font-bold text-base-content">
-//           👋 Welcome Back, Jane!
-//         </h1>
-//         <p className="text-base-content/70">
-//           Here's a quick overview of your progress.
-//         </p>
-//       </div>
-
-//       {/* 2. Main Metrics (Total Lessons, Favorites) using DaisyUI stats */}
-//       <div className="stats shadow w-full border border-base-300 bg-base-100">
-//         <div className="stat">
-//           <div className="stat-figure text-primary">
-//             <FaBook className="w-8 h-8" />
-//           </div>
-//           <div className="stat-title">Total Lessons Created</div>
-//           <div className="stat-value text-primary">
-//             {" "}
-//             {myLessons.totalLessons}
-//           </div>
-//           <div className="stat-desc">Your personal library size</div>
-//         </div>
-
-//         <div className="stat">
-//           <div className="stat-figure text-secondary">
-//             <FaStar className="w-8 h-8" />
-//           </div>
-//           <div className="stat-title">Total Saved (Favorites)</div>
-//           <div className="stat-value text-secondary">{favorites.length}</div>
-//           <div className="stat-desc">Lessons bookmarked for later</div>
-//         </div>
-
-//         <div className="stat hidden sm:block">
-//           <div className="stat-figure text-accent">
-//             <FaPlusCircle className="w-8 h-8" />
-//           </div>
-//           <div className="stat-title">Monthly Contributions</div>
-//           <div className="stat-value text-accent">7</div>
-//           <div className="stat-desc">New lessons added this month</div>
-//         </div>
-//       </div>
-
-//       {/* 3. Quick Shortcuts using Link and DaisyUI buttons/cards */}
-//       <section className="space-y-4">
-//         <h2 className="text-2xl font-semibold text-base-content">
-//           ⚡ Quick Actions
-//         </h2>
-//         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-//           <Link
-//             to="/create-lesson"
-//             className="card bg-primary text-primary-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
-//           >
-//             <div className="card-body p-4 md:p-6 text-center">
-//               <FaPlusCircle className="w-8 h-8 mx-auto mb-2" />
-//               <h3 className="text-lg font-bold">Create New Lesson</h3>
-//             </div>
-//           </Link>
-
-//           <Link
-//             to="/favorites"
-//             className="card bg-secondary text-secondary-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
-//           >
-//             <div className="card-body p-4 md:p-6 text-center">
-//               <FaHeart className="w-8 h-8 mx-auto mb-2" />
-//               <h3 className="text-lg font-bold">View My Favorites</h3>
-//             </div>
-//           </Link>
-
-//           <Link
-//             to="/settings"
-//             className="card bg-neutral text-neutral-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
-//           >
-//             <div className="card-body p-4 md:p-6 text-center">
-//               <FaCog className="w-8 h-8 mx-auto mb-2" />
-//               <h3 className="text-lg font-bold">Profile Settings</h3>
-//             </div>
-//           </Link>
-
-//           <Link
-//             to="/support"
-//             className="card bg-info text-info-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
-//           >
-//             <div className="card-body p-4 md:p-6 text-center">
-//               <FaQuestionCircle className="w-8 h-8 mx-auto mb-2" />
-//               <h3 className="text-lg font-bold">Get Help/Support</h3>
-//             </div>
-//           </Link>
-//         </div>
-//       </section>
-
-//       {/* 4. Analytics Chart & Recently Added (Side-by-Side) */}
-//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-//         {/* Small Analytics Chart Card (Takes 2/3 width) */}
-//         <div className="lg:col-span-2 card bg-base-100 shadow-xl border border-base-200">
-//           <div className="card-body">
-//             <h2 className="card-title text-xl font-semibold">
-//               📈 Weekly Activity Reflection
-//             </h2>
-
-//             <div className="h-60 bg-base-200 rounded-lg flex items-center justify-around p-4 my-2">
-//               <p className="text-base-content/60 italic hidden sm:block">
-//                 Placeholder for Chart.js/Recharts integration
-//               </p>
-
-//               {/* Simple visual indicator for contribution/completion rate */}
-//               <div
-//                 className="radial-progress text-success"
-//                 style={{
-//                   "--value": 75,
-//                   "--size": "8rem",
-//                   "--thickness": "12px",
-//                 }}
-//                 role="progressbar"
-//               >
-//                 <span className="font-bold text-xl">75%</span>
-//                 <span className="text-sm mt-1">Completion</span>
-//               </div>
-//             </div>
-
-//             <div className="alert alert-info shadow-lg mt-4">
-//               <div>
-//                 <svg
-//                   xmlns="http://www.w3.org/2000/svg"
-//                   fill="none"
-//                   viewBox="0 0 24 24"
-//                   className="stroke-current flex-shrink-0 w-6 h-6"
-//                 >
-//                   <path
-//                     strokeLinecap="round"
-//                     strokeLinejoin="round"
-//                     strokeWidth="2"
-//                     d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-//                   ></path>
-//                 </svg>
-//                 <span>
-//                   **Reflection:** You were highly active! You completed 9 study
-//                   sessions and created 3 new lessons this week.
-//                 </span>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Recently Added Lessons Card (Takes 1/3 width) */}
-//         <div className="lg:col-span-1 card bg-base-100 shadow-xl border border-base-200">
-//           <div className="card-body">
-//             <h2 className="card-title text-xl font-semibold">
-//               🕒 Recently Added
-//             </h2>
-//             <ul className="space-y-3 mt-2 menu p-0">
-//               <li className="hover:bg-base-200 rounded-md">
-//                 <Link to="/lesson/101">Introduction to Quantum Physics</Link>
-//               </li>
-//               <li className="hover:bg-base-200 rounded-md">
-//                 <Link to="/lesson/102">Advanced CSS Layouts (Flexbox)</Link>
-//               </li>
-//               <li className="hover:bg-base-200 rounded-md">
-//                 <Link to="/lesson/103">The History of Renaissance Art</Link>
-//               </li>
-//               <li className="hover:bg-base-200 rounded-md">
-//                 <Link to="/lesson/104">Financial Modeling Basics</Link>
-//               </li>
-//             </ul>
-//             <div className="card-actions justify-end mt-4">
-//               <Link
-//                 to="/my-lessons"
-//                 className="btn btn-sm btn-outline btn-primary"
-//               >
-//                 View All Lessons →
-//               </Link>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default UserDashboardHome;
-
 import React from "react";
 import {
   FaBook,
@@ -233,7 +12,6 @@ import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../Hooks/useAuth";
 import useAxiosSecure from "../../../Hooks/useAxiosSecure";
 import LoadingSpinner from "../../../Component/LoadingSpenner/LoadingSpenner";
-
 import {
   ResponsiveContainer,
   BarChart,
@@ -281,7 +59,7 @@ const UserDashboardHome = () => {
 
   if (isLoadingLessons || isLoadingFav) return <LoadingSpinner />;
 
-  // Prepare chart data
+  // Chart Data
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const chartData = days.map((day, idx) => {
     const item = analytics.find((d) => d._id === idx + 1);
@@ -289,109 +67,133 @@ const UserDashboardHome = () => {
   });
 
   return (
-    <div className="space-y-8 p-4">
-      {/* Welcome Header */}
-      <div className="pb-4">
-        <h1 className="text-3xl font-bold text-base-content">
+    <div className="space-y-8 p-4 bg-gray-50 dark:bg-gray-900 min-h-screen">
+      {/* Welcome */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-800 dark:text-white">
           👋 Welcome Back, {user?.displayName || "User"}!
         </h1>
-        <p className="text-base-content/70">
+        <p className="text-gray-600 dark:text-gray-400">
           Here's a quick overview of your progress.
         </p>
       </div>
 
       {/* Stats */}
-      <div className="stats shadow w-full border border-base-300 bg-base-100">
-        <div className="stat">
-          <div className="stat-figure text-primary">
-            <FaBook className="w-8 h-8" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="bg-blue-100 dark:bg-blue-900/40 p-6 rounded-xl shadow">
+          <div className="flex items-center gap-4">
+            <FaBook className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+            <div>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                Total Lessons Created
+              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {totalLessons}
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Your personal library
+              </p>
+            </div>
           </div>
-          <div className="stat-title">Total Lessons Created</div>
-          <div className="stat-value text-primary">{totalLessons}</div>
-          <div className="stat-desc">Your personal library size</div>
         </div>
-        <div className="stat">
-          <div className="stat-figure text-secondary">
-            <FaStar className="w-8 h-8" />
+
+        <div className="bg-yellow-100 dark:bg-yellow-900/40 p-6 rounded-xl shadow">
+          <div className="flex items-center gap-4">
+            <FaStar className="w-10 h-10 text-yellow-600 dark:text-yellow-400" />
+            <div>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                Total Saved
+              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {favorites.length}
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                Lessons bookmarked
+              </p>
+            </div>
           </div>
-          <div className="stat-title">Total Saved (Favorites)</div>
-          <div className="stat-value text-secondary">{favorites.length}</div>
-          <div className="stat-desc">Lessons bookmarked for later</div>
         </div>
-        <div className="stat hidden sm:block">
-          <div className="stat-figure text-accent">
-            <FaPlusCircle className="w-8 h-8" />
+
+        <div className="bg-green-100 dark:bg-green-900/40 p-6 rounded-xl shadow hidden sm:flex">
+          <div className="flex items-center gap-4">
+            <FaPlusCircle className="w-10 h-10 text-green-600 dark:text-green-400" />
+            <div>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                Monthly Contributions
+              </p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {
+                  lessons.filter(
+                    (l) =>
+                      new Date(l.createdAt).getMonth() === new Date().getMonth()
+                  ).length
+                }
+              </p>
+              <p className="text-xs text-gray-600 dark:text-gray-400">
+                New lessons this month
+              </p>
+            </div>
           </div>
-          <div className="stat-title">Monthly Contributions</div>
-          <div className="stat-value text-accent">
-            {
-              lessons.filter(
-                (l) =>
-                  new Date(l.createdAt).getMonth() === new Date().getMonth()
-              ).length
-            }
-          </div>
-          <div className="stat-desc">New lessons added this month</div>
         </div>
       </div>
 
       {/* Quick Actions */}
       <section className="space-y-4">
-        <h2 className="text-2xl font-semibold text-base-content">
+        <h2 className="text-2xl font-semibold text-gray-800 dark:text-white">
           ⚡ Quick Actions
         </h2>
+
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <Link
             to="/dashboard/add-lesson"
-            className="card bg-primary text-primary-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            className="card bg-primary text-primary-content shadow-xl"
           >
-            <div className="card-body p-4 md:p-6 text-center">
-              <FaPlusCircle className="w-8 h-8 mx-auto mb-2" />
-              <h3 className="text-lg font-bold">Create New Lesson</h3>
+            <div className="card-body text-center">
+              <FaPlusCircle className="w-10 h-10 mx-auto mb-2" />
+              <h3 className="font-bold">Create Lesson</h3>
             </div>
           </Link>
+
           <Link
             to="/dashboard/my-favorite"
-            className="card bg-secondary text-secondary-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            className="card bg-secondary text-secondary-content shadow-xl"
           >
-            <div className="card-body p-4 md:p-6 text-center">
-              <FaHeart className="w-8 h-8 mx-auto mb-2" />
-              <h3 className="text-lg font-bold">View My Favorites</h3>
+            <div className="card-body text-center">
+              <FaHeart className="w-10 h-10 mx-auto mb-2" />
+              <h3 className="font-bold">My Favorites</h3>
             </div>
           </Link>
+
           <Link
-            to="/dashboard/profile"
-            className="card bg-neutral text-neutral-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
+            to="/profile"
+            className="card bg-neutral text-neutral-content shadow-xl"
           >
-            <div className="card-body p-4 md:p-6 text-center">
-              <FaCog className="w-8 h-8 mx-auto mb-2" />
-              <h3 className="text-lg font-bold">Profile Settings</h3>
+            <div className="card-body text-center">
+              <FaCog className="w-10 h-10 mx-auto mb-2" />
+              <h3 className="font-bold">Profile</h3>
             </div>
           </Link>
-          <Link
-            to="/"
-            className="card bg-info text-info-content shadow-xl hover:shadow-2xl transition-shadow duration-300"
-          >
-            <div className="card-body p-4 md:p-6 text-center">
-              <FaQuestionCircle className="w-8 h-8 mx-auto mb-2" />
-              <h3 className="text-lg font-bold">Get Help/Support</h3>
+
+          <Link to="/" className="card bg-info text-info-content shadow-xl">
+            <div className="card-body text-center">
+              <FaQuestionCircle className="w-10 h-10 mx-auto mb-2" />
+              <h3 className="font-bold">Help</h3>
             </div>
           </Link>
         </div>
       </section>
 
-      {/* Analytics + Recently Added */}
+      {/* Analytics + Recent */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Analytics Chart */}
-        <div className="lg:col-span-2 card bg-base-100 shadow-xl border border-base-200">
+        <div className="lg:col-span-2 card bg-white dark:bg-gray-800 shadow-xl border dark:border-gray-700">
           <div className="card-body">
-            <h2 className="card-title text-xl font-semibold">
-              📈 Weekly Activity Reflection
+            <h2 className="card-title text-gray-800 dark:text-white">
+              📈 Weekly Activity
             </h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={chartData}>
-                <XAxis dataKey="day" />
-                <YAxis />
+                <XAxis dataKey="day" stroke="#9ca3af" />
+                <YAxis stroke="#9ca3af" />
                 <Tooltip />
                 <Bar dataKey="count" fill="#4ade80" />
               </BarChart>
@@ -399,25 +201,42 @@ const UserDashboardHome = () => {
           </div>
         </div>
 
-        {/* Recently Added Lessons */}
-        <div className="lg:col-span-1 card bg-base-100 shadow-xl border border-base-200">
+        <div className="card bg-white dark:bg-gray-800 shadow-xl border dark:border-gray-700">
           <div className="card-body">
-            <h2 className="card-title text-xl font-semibold">
+            <h2 className="card-title text-gray-800 dark:text-white">
               🕒 Recently Added
             </h2>
-            <ul className="space-y-3 mt-2 menu p-0">
+
+            <div className="space-y-3">
               {lessons.slice(0, 4).map((lesson) => (
-                <li key={lesson._id} className="hover:bg-base-200 rounded-md">
-                  <Link to={`/lesson/${lesson._id}`}>{lesson.title}</Link>
-                </li>
+                <Link
+                  key={lesson._id}
+                  to={`/lesson/${lesson._id}`}
+                  className="flex gap-3 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <img
+                    src={lesson.image}
+                    alt={lesson.title}
+                    className="w-14 h-14 rounded-lg object-cover"
+                  />
+                  <div>
+                    <p className="font-medium text-gray-800 dark:text-white">
+                      {lesson.title}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {lesson.category}
+                    </p>
+                  </div>
+                </Link>
               ))}
-            </ul>
-            <div className="card-actions justify-end mt-4">
+            </div>
+
+            <div className="mt-4 text-right">
               <Link
                 to="/dashboard/my-lessons"
                 className="btn btn-sm btn-outline btn-primary"
               >
-                View All Lessons →
+                View All →
               </Link>
             </div>
           </div>

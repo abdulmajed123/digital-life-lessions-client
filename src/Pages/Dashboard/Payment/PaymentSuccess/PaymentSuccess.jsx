@@ -11,15 +11,18 @@ const PaymentSuccess = () => {
   useEffect(() => {
     if (sessionId) {
       axiosSecure
-        .patch(`/users/make-premium?session_id=${sessionId}`)
+        .patch(`/user/make-premium?session_id=${sessionId}`)
         .then((res) => {
           console.log(res.data);
         });
     }
   }, [sessionId, axiosSecure]);
+
   return (
-    <div>
-      <h2>Payment Successful! </h2>
+    <div className="min-h-screen flex justify-center items-center">
+      <h2 className="text-5xl font-bold text-center">
+        Payment Successful!....{" "}
+      </h2>
     </div>
   );
 };
